@@ -215,8 +215,9 @@ function forceLogin(args: {[string]: string}, requestedPath: string) {
 		// we do not allow any other hashes except "#mail". this prevents login loops.
 		m.route.set("/login")
 	} else {
-		let pathWithoutParameter = requestedPath.indexOf("?")
-		> 0 ? requestedPath.substring(0, requestedPath.indexOf("?")) : requestedPath
+		let pathWithoutParameter = requestedPath.indexOf("?") > 0
+			? requestedPath.substring(0, requestedPath.indexOf("?"))
+			: requestedPath
 		if (pathWithoutParameter.trim() === '/') {
 			let newQueryString = m.buildQueryString(args)
 			m.route.set(`/login` + (newQueryString.length > 0 ? "?" + newQueryString : ""))
