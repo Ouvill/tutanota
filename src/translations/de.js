@@ -1151,6 +1151,13 @@ module.exports = {
 		"formatTextJustify_msg": "Blocksatz",
 		"formatTextUl_msg": "Liste",
 		"formatTextOl_msg": "Nummerierte Liste",
-		"tresoritDiscount_msg": "Exklusives Angebot von Tutanota + Tresorit: 5 Monate Rabatt im ersten Jahr!"
+		"tresoritDiscount_msg": "Exklusives Angebot von Tutanota + Tresorit: 5 Monate Rabatt im ersten Jahr!",
+		"goPremium_msg": "Als Premium-Nutzer kannst du links im Menü deine Suchfilter anpassen.",
+		"changeTimeFrame_msg": "Mit Premium kannst du deinen Suchzeitraum erweitern!",
+		"stillReferencedFromContactForm_msg": "Diese Instanz kann nicht deaktiviert werden, da sie noch von einem Kontaktformular referenziert wird.",
+		"onlyAvailableForPremiumNotIncluded_msg": "Diese Funktion kann nur nach dem Wechsel auf Tutanota Premium gebucht werden. Bitte wechsel jetzt zu Premium!",
+		"sharedMailbox_label": "Geteilte Mailboxen:",
+		"updateAvailable_label": "Neue Version verfügbar ({version})",
+		"clickToUpdate_msg": "Hier klicken um sie sofort zu installieren."
 	}
 }

@@ -1150,6 +1150,15 @@ module.exports = {
 		"formatTextJustify_msg": "Justify",
 		"formatTextUl_msg": "Unordered list",
 		"formatTextOl_msg": "Ordered list",
-		"tresoritDiscount_msg": "Tutanota + Tresorit special offer: 5 months discount for first year!"
+		"tresoritDiscount_msg": "Tutanota + Tresorit special offer: 5 months discount for first year!",
+		"goPremium_msg": "As a Premium user you can adjust your search filters in the menu to the left.",
+		"changeTimeFrame_msg": "Go Premium and adjust your search period!",
+		"importUsers_action": "Add multiple users",
+		"enterAsCSV_msg": "Please enter your users details as CSV",
+		"stillReferencedFromContactForm_msg": "This item can not be deactivated because it is still referenced from a contact form.",
+		"onlyAvailableForPremiumNotIncluded_msg": "This feature can only be ordered after upgrading to Premium. Please upgrade your account now.",
+		"sharedMailbox_label": "Shared mailboxes:",
+		"updateAvailable_label": "Update available ({version})",
+		"clickToUpdate_msg": "Click here if you want to apply it now, or let us auto install on quit."
 	}
 }

@@ -1153,5 +1153,12 @@ module.exports = {
 		"formatTextJustify_msg": "Blocksatz",
 		"formatTextUl_msg": "Liste",
 		"formatTextOl_msg": "Nummerierte Liste",
+		"yourMessage_label": "Ihre Nachricht",
+		"goPremium_msg": "Als Premium-Nutzer können Sie links im Menü Ihre Suchfilter anpassen.",
+		"changeTimeFrame_msg": "Mit Premium können Sie Ihren Suchzeitraum erweitern!",
+		"onlyAvailableForPremiumNotIncluded_msg": "Diese Funktion kann nur nach dem Wechsel auf Tutanota Premium gebucht werden. Bitte wechseln Sie jetzt zu Premium!",
+		"sharedMailbox_label": "Geteilte Mailboxen:",
+		"updateAvailable_label": "Neue Version verfügbar ({version})",
+		"clickToUpdate_msg": "Hier klicken um sie sofort zu installieren."
 	}
 }
