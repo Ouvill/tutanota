@@ -1,5 +1,5 @@
 // @flow
-import IPC from './IPC.js'
+import {ipc} from './IPC.js'
 
 class DesktopLocalizationProvider {
 
@@ -13,11 +13,11 @@ class DesktopLocalizationProvider {
 	init(): Promise<void> {
 		return new Promise((resolve, reject) => {
 			console.log("init langs...")
-			IPC.once('get-translations', (e, translations) => {
+			ipc.once('get-translations', (e, translations) => {
 				this._setTranslations(translations)
 				resolve()
 			})
-			IPC.send('get-translations')
+			ipc.send('get-translations')
 		})
 	}
 
@@ -30,6 +30,12 @@ class DesktopLocalizationProvider {
 		this.formats = translations.format
 	}
 
+	/**
+	 * keep in sync with LanguageViewModel.get
+	 * @param id
+	 * @param params
+	 * @returns {*}
+	 */
 	get(id: string, params: ?Object): string {
 		if (id == null) {
 			return ""

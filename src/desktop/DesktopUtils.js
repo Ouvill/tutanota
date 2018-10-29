@@ -4,7 +4,6 @@ import path from 'path'
 import {exec, spawn} from 'child_process'
 import fs from "fs-extra"
 import crypto from 'crypto'
-import Promise from 'bluebird'
 import {app} from 'electron'
 import {defer} from '../api/common/utils/Utils.js'
 
@@ -46,6 +45,8 @@ export default class DesktopUtils {
 				return Promise.resolve()
 			case "linux":
 				return Promise.resolve()
+			default:
+				return Promise.reject(new Error("Invalid process.platform"))
 		}
 	}
 
@@ -64,6 +65,8 @@ export default class DesktopUtils {
 				return Promise.resolve()
 			case "linux":
 				return Promise.resolve()
+			default:
+				return Promise.reject(new Error(`invalid platform: ${process.platform}`))
 		}
 	}
 }
@@ -116,7 +119,6 @@ function _elevateWin(command: string, args: Array<string>) {
 		stdio: ['ignore', 'inherit', 'inherit'],
 		detached: false
 	}).on('exit', (code, signal) => {
-		console.log("code: ", code)
 		if (code === 0) {
 			deferred.resolve()
 		} else {
@@ -152,7 +154,9 @@ function _executeRegistryScript(script: string): Promise<void> {
 function _registerOnWin(): Promise<void> {
 	const tmpRegScript = require('./reg-templater.js').registerKeys(process.execPath)
 	return _executeRegistryScript(tmpRegScript)
-		.then(() => app.setAsDefaultProtocolClient('mailto'))
+		.then(() => {
+			app.setAsDefaultProtocolClient('mailto')
+		})
 }
 
 function _unregisterOnWin(): Promise<void> {

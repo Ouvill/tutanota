@@ -2,7 +2,13 @@
 import type {GroupTypeEnum, OperationTypeEnum} from "../TutanotaConstants"
 import {GroupType} from "../TutanotaConstants"
 
-export function defer<T>(): {resolve: (T) => void, reject: (Error) => void, promise: Promise<T>} {
+export type DeferredObject<T> = {
+	resolve: (T) => void,
+	reject: (Error) => void,
+	promise: Promise<T>,
+}
+
+export function defer<T>(): DeferredObject<T> {
 	let ret = {}
 	ret.promise = new Promise((resolve, reject) => {
 		ret.resolve = resolve

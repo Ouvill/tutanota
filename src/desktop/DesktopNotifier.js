@@ -1,6 +1,5 @@
 // @flow
 import {Notification} from 'electron'
-import Promise from 'bluebird'
 
 export type NotificationResultEnum = $Values<typeof NotificationResult>;
 export const NotificationResult = {
@@ -9,7 +8,7 @@ export const NotificationResult = {
 }
 
 class DesktopNotifier {
-	_canShow : boolean = false
+	_canShow: boolean = false
 	pendingNotifications: Array<Function> = []
 
 	/**
@@ -44,7 +43,7 @@ class DesktopNotifier {
 		if (!this.isAvailable()) {
 			return Promise.resolve()
 		}
-		let promise: Promise
+		let promise: Promise<NotificationResultEnum>
 		if (this._canShow) {
 			promise = new Promise((resolve, reject) => this._makeNotification(props, (res) => {
 				return () => resolve(res)

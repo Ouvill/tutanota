@@ -135,7 +135,6 @@ export class Queue {
 		}
 	}
 
-
 	setCommands(commands: {[key: WorkerRequestType | MainRequestType | NativeRequestType | JsRequestType]: Command}) {
 		this._commands = commands
 	}

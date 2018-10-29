@@ -109,7 +109,7 @@ function createHtml(env) {
 		_writeFile(`./build/${filenamePrefix}.js`, [
 			`window.whitelabelCustomizations = null`,
 			`window.env = ${JSON.stringify(env, null, 2)}`,
-			`window.bridge = Object.assign({}, window.bridge)`,
+			`window.nativeApp = Object.assign({}, window.nativeApp)`,
 			`System.config(env.systemConfig)`,
 			`System.import("src/system-resolve.js").then(function() { System.import('src/bootstrapHotReload.js') })`
 		].join("\n")),

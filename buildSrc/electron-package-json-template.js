@@ -19,7 +19,8 @@ module.exports = function (nameSuffix, version, targetUrl, iconPath, sign) {
 		"dependencies": {
 			"electron-updater": "^3.1.2",
 			"electron-localshortcut": "^3.1.0",
-			"fs-extra": "1.0.0"
+			"fs-extra": "1.0.0",
+			"bluebird": "3.5.2",
 		},
 		"devDependencies": {
 			"electron": "^3.0.0"

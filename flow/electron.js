@@ -157,12 +157,12 @@ export type UpdateFileInfo = {
 	url: string
 }
 
-export type Bridge = {|
-	sendMessage: (msg: BridgeMessage, data: any) => void,
-	startListening: (msg: BridgeMessage, listener: Function) => void,
-	stopListening: (msg: BridgeMessage, listener: Function) => void,
-	getVersion: () => string,
-|}
+// export type Bridge = {|
+// 	sendMessage: (msg: BridgeMessage, data: any) => void,
+// 	startListening: (msg: BridgeMessage, listener: Function) => void,
+// 	stopListening: (msg: BridgeMessage, listener: Function) => void,
+// 	getVersion: () => string,
+// |}
 
 // https://github.com/electron/electron/blob/master/docs/api/app.md#events
 export type AppEvent
@@ -288,7 +288,7 @@ export type BridgeMessage
 	| 'close-editor'    // try to close the mail editor
 	| 'editor-closed'   // editor was closed
 	| 'mailto'          // external navigation event
-	| 'webapp-ready'    // can start communication with webapp
-	| 'show-window'    // focus the browserWindow
+	| 'show-window'     // focus the browserWindow
 	| 'get-translations'// get all translations from the webapp
+	| 'protocol-message'// WorkerProtocol communication
 

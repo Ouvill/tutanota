@@ -1,5 +1,5 @@
 // @flow
-import IPC from './IPC.js'
+import {ipc} from './IPC.js'
 import type {ElectronPermission} from 'electron'
 import {BrowserWindow, WebContents} from 'electron'
 import * as localShortcut from 'electron-localshortcut'
@@ -38,12 +38,12 @@ export class MainWindow {
 			}
 		})
 
-		IPC.init(this)
+		ipc.init(this)
 
 		// user clicked 'x' button
 		this._browserWindow
 		    .on('close', () => {
-			    IPC.send('close-editor')
+			    ipc.send('close-editor')
 		    })
 
 		this._browserWindow.webContents.session.setPermissionRequestHandler(this._permissionRequestHandler)
@@ -71,7 +71,7 @@ export class MainWindow {
 		localShortcut.register('F12', () => this._toggleDevTools())
 		localShortcut.register('F5', () => this._browserWindow.loadURL(this._startFile))
 
-		this._loadMailtoPath(process.argv.find((arg) => arg.startsWith('mailto')))
+		this._browserWindow.loadURL(this._startFile)
 	}
 
 	show(mailtoArg: ?string) {
@@ -80,7 +80,7 @@ export class MainWindow {
 		if (this._browserWindow.isMinimized()) {
 			this._browserWindow.restore()
 			this._browserWindow.show()
-			//TODO: there has to be a better way
+			//TODO: there has to be a better way. fix for #691
 			contents.toggleDevTools()
 			if (devToolsState) {
 				contents.openDevTools()
@@ -91,7 +91,7 @@ export class MainWindow {
 			this._browserWindow.focus()
 		}
 		if (mailtoArg) {
-			IPC.send('close-editor')
+			ipc.send('close-editor')
 			this._loadMailtoPath(mailtoArg)
 		}
 	}

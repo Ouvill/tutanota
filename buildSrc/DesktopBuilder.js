@@ -1,5 +1,5 @@
 const Promise = require('bluebird')
-const babelCompile = require('./Builder.js').babelCompile
+const babel = Promise.promisifyAll(require("babel-core"))
 const fs = Promise.promisifyAll(require("fs-extra"))
 const path = require("path")
 
@@ -90,7 +90,8 @@ function transpile(files, baseDir, distDir) {
 			nextFiles = nextFiles.filter((elem, i) => nextFiles.indexOf(elem === i))
 		}
 	}
-	console.log("transpiled files:\n", transpiledFiles.join("\n"))
+	console.log("transpiled files:")
+	console.log(transpiledFiles.map(p => path.relative(".", p)).join("\n"))
 }
 
 /**
@@ -115,6 +116,25 @@ function findDirectDepsAndTranspile(filePath) {
 	}
 
 	return {src, deps}
+}
+
+function babelCompile(src, srcFile) {
+	let result = babel.transform(src, {
+		"plugins": [
+			"transform-flow-strip-types",
+			"transform-class-properties",
+		],
+		"presets": [
+			"bluebird",
+			"es2015"
+		],
+		comments: false,
+		babelrc: false,
+		retainLines: true,
+		sourceMaps: srcFile != null ? "inline" : false,
+		filename: srcFile,
+	})
+	return result
 }
 
 module.exports = {
