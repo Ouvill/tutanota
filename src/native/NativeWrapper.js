@@ -1,7 +1,7 @@
 //@flow
 import {Queue, Request} from "../api/common/WorkerProtocol"
 import {ConnectionError} from "../api/common/error/RestError"
-import {defer, neverNull} from "../api/common/utils/Utils"
+import {defer, neverNull, noOp} from "../api/common/utils/Utils"
 import {isMainOrNode, Mode} from "../api/Env"
 import {base64ToUint8Array, utf8Uint8ArrayToString} from "../api/common/utils/Encoding"
 import {appCommands, desktopCommands} from './NativeWrapperCommands.js'
@@ -24,7 +24,7 @@ class NativeWrapper {
 			get: (obj, prop) => {
 				return prop in window.nativeApp
 					? window.nativeApp[prop]
-					: () => {}
+					: noOp
 			}
 		})
 	}
@@ -69,7 +69,7 @@ class NativeWrapper {
 
 	/**
 	 * invoked via eval()-type call (App)
-	 * or via IPC from the preload script (Desktop)
+	 * bypassed by the preload script (Desktop)
 	 * @param msg64
 	 */
 	handleMessageFromNative(msg64: string) {

@@ -13,10 +13,11 @@ function sendMessage(msg, args) {
 }
 
 ipcRenderer.on('protocol-message', (ev, msg) => {
-	let msg64 = JSON.stringify(msg)
-	msg64 = PreloadImports.stringToUtf8Uint8Array(msg64)
-	msg64 = PreloadImports.uint8ArrayToBase64(msg64)
-	window.tutao.nativeApp.handleMessageFromNative(msg64)
+	window.tutao.nativeApp._nativeQueue._handleMessage(msg)
+})
+
+ipcRenderer.on('print-argv', (ev, msg) => {
+	console.log("node argv:", msg)
 })
 
 function receiveMessage(msg, listener) {
@@ -26,18 +27,6 @@ function receiveMessage(msg, listener) {
 function removeListener(msg, listener) {
 	return ipcRenderer.removeListener(msg, listener)
 }
-
-ipcRenderer.on('get-translations', () => {
-	const translations = {
-		translations: window.tutao.lang.translations,
-		fallback: window.tutao.lang.fallback,
-		code: window.tutao.lang.code,
-		languageTag: window.tutao.lang.languageTag,
-		staticTranslations: window.tutao.lang.staticTranslations,
-		formats: window.tutao.lang.formats,
-	}
-	ipcRenderer.send('get-translations', translations)
-})
 
 window.nativeApp = {
 	invoke: (msg: string) => {sendMessage('protocol-message', msg)},

@@ -60,6 +60,19 @@ const keyboardSizeChanged = (msg: Request): Promise<void> => {
 	})
 }
 
+const sendTranslations = (msg: Request): Promise<any> => {
+	return _asyncImport('src/misc/LanguageViewModel.js').then(() => {
+		return {
+			translations: window.tutao.lang.translations,
+			fallback: window.tutao.lang.fallback,
+			code: window.tutao.lang.code,
+			languageTag: window.tutao.lang.languageTag,
+			staticTranslations: window.tutao.lang.staticTranslations,
+			formats: window.tutao.lang.formats,
+		}
+	})
+}
+
 function getFilesData(filesUris: string[]): Promise<Array<FileReference>> {
 	return Promise.all(filesUris.map(uri =>
 		Promise.join(getName(uri), getMimeType(uri), getSize(uri), (name, mimeType, size) => {
@@ -88,5 +101,6 @@ export const appCommands = {
 export const desktopCommands = {
 	createMailEditor,
 	showAlertDialog,
-	openMailbox
+	openMailbox,
+	sendTranslations
 }

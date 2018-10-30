@@ -10,18 +10,12 @@ class DesktopLocalizationProvider {
 	staticTranslations: Object;
 	formats: Object;
 
-	init(): Promise<void> {
-		return new Promise((resolve, reject) => {
-			console.log("init langs...")
-			ipc.once('get-translations', (e, translations) => {
-				this._setTranslations(translations)
-				resolve()
-			})
-			ipc.send('get-translations')
-		})
+	init = (): Promise<void> => {
+		return ipc.sendRequest('sendTranslations', [])
+		          .then(this._setTranslations)
 	}
 
-	_setTranslations(translations: any) {
+	_setTranslations = (translations: any) => {
 		this.translations = translations.translations
 		this.fallback = translations.fallback
 		this.code = translations.code
@@ -36,7 +30,7 @@ class DesktopLocalizationProvider {
 	 * @param params
 	 * @returns {*}
 	 */
-	get(id: string, params: ?Object): string {
+	get = (id: string, params: ?Object): string => {
 		if (id == null) {
 			return ""
 		}

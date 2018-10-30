@@ -160,6 +160,7 @@ type JsRequestType = 'createMailEditor'
 	| 'showAlertDialog'
 	| 'openMailbox'
 	| 'keyboardSizeChanged'
+	| 'sendTranslations'
 
 
 type Callback<T> = (err: ?Error, data?: T) => void

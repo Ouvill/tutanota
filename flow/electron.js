@@ -286,9 +286,8 @@ export type AutoUpdaterEvent
 export type BridgeMessage
 	= 'window-close'    // user closed the client
 	| 'close-editor'    // try to close the mail editor
-	| 'editor-closed'   // editor was closed
 	| 'mailto'          // external navigation event
 	| 'show-window'     // focus the browserWindow
 	| 'get-translations'// get all translations from the webapp
 	| 'protocol-message'// WorkerProtocol communication
-
+	| 'print-argv'      // prints argument to browser console

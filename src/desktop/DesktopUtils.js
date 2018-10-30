@@ -42,7 +42,9 @@ export default class DesktopUtils {
 						}
 					})
 			case "darwin":
-				return Promise.resolve()
+				return app.setAsDefaultProtocolClient("mailto")
+					? Promise.resolve()
+					: Promise.reject()
 			case "linux":
 				return Promise.resolve()
 			default:

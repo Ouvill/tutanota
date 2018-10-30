@@ -36,18 +36,22 @@ if (process.argv.indexOf("-r") !== -1) {
 		}
 	})
 
-	app.on('activate', () => {
-		if (mainWindow === null) {
-			mainWindow = new MainWindow()
+	app.on('open-url', (e, url) => { // MacOS mailto handling
+		e.preventDefault()
+		if (!url.startsWith('mailto:')) {
+			return
 		}
+		handleMailto(url)
+	})
+
+	app.on('activate', () => {
 		mainWindow.show()
 	})
 
 	app.on('second-instance', (e, argv, cwd) => {
-		if (mainWindow) {
-			mainWindow.show()
-			handleMailto(argv.find((arg) => arg.startsWith('mailto')))
-		}
+		console.log("2nd instance argv: ", argv)
+		mainWindow.show()
+		handleMailto(argv.find((arg) => arg.startsWith('mailto')))
 	})
 
 	app.on('ready', createMainWindow)
@@ -57,30 +61,16 @@ function createMainWindow() {
 	mainWindow = new MainWindow()
 	console.log("default mailto handler:", app.isDefaultProtocolClient("mailto"))
 	console.log("notifications available:", notifier.isAvailable())
-	ipc.initialized().then(main)
+	ipc.initialized()
+	   .then(lang.init)
+	   .then(main)
 }
 
 function main() {
 	console.log("Webapp ready")
 	notifier.start()
 	updater.start()
-	lang.init()
 	handleArgv()
-	// .then(() => {
-	//    return notifier
-	//     .showOneShot({
-	// 	    title: lang.get('yearly_label'),
-	// 	    body: lang.get('amountUsedAndActivatedOf_label', {"{used}": 'nutzt', "{active}": 'aktiv', "{totalAmount}": 'max'}),
-	//     })
-	// })
-	// .then((res) => {
-	//    if (res !== NotificationResult.Click) {
-	//     return Promise.reject()
-	//    }
-	//    return DesktopUtils.registerAsMailtoHandler(true)
-	// })
-	// .then(() => console.log("successfully registered as mailto handler "))
-	// .catch((e) => console.log(e))
 }
 
 function handleArgv() {
@@ -90,6 +80,7 @@ function handleArgv() {
 function handleMailto(mailtoArg?: string) {
 	if (mailtoArg) {
 		/*[filesUris, text, addresses, subject, mailToUrl]*/
+		mainWindow.show()
 		ipc.sendRequest('createMailEditor', [[], "", "", "", mailtoArg])
 	}
 }

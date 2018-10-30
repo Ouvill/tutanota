@@ -1,7 +1,7 @@
 // @flow
 import {ipc} from './IPC.js'
 import type {ElectronPermission} from 'electron'
-import {BrowserWindow, WebContents} from 'electron'
+import {app, BrowserWindow, WebContents} from 'electron'
 import * as localShortcut from 'electron-localshortcut'
 import open from './open.js'
 import DesktopUtils from './DesktopUtils.js'
@@ -11,8 +11,33 @@ export class MainWindow {
 	_rewroteURL: boolean;
 	_startFile: string;
 	_browserWindow: BrowserWindow;
+	_forceQuit: boolean;
 
 	constructor() {
+		this._forceQuit = false
+		this._createBrowserWindow()
+		this._browserWindow.loadURL(this._startFile)
+	}
+
+	show() {
+		const contents = this._browserWindow.webContents
+		const devToolsState = contents.isDevToolsOpened()
+		this._browserWindow.show()
+		if (this._browserWindow.isMinimized()) {
+			this._browserWindow.restore()
+			//TODO: there has to be a better way. fix for #691
+			contents.toggleDevTools()
+			if (devToolsState) {
+				contents.openDevTools()
+			} else {
+				contents.closeDevTools()
+			}
+		} else {
+			this._browserWindow.focus()
+		}
+	}
+
+	_createBrowserWindow() {
 		this._rewroteURL = false
 		let normalizedPath = path.join(__dirname, "..", "..", "desktop.html")
 		this._startFile = DesktopUtils.pathToFileURL(normalizedPath)
@@ -41,10 +66,24 @@ export class MainWindow {
 		ipc.init(this)
 
 		// user clicked 'x' button
-		this._browserWindow
-		    .on('close', () => {
-			    ipc.send('close-editor')
-		    })
+		if (process.platform !== "darwin") {
+			this._browserWindow.on('close', (ev) => {
+				ipc.send('close-editor')
+			})
+		} else {
+			app.on('before-quit', () => {
+				this._forceQuit = true
+			})
+			this._browserWindow.on('close', (ev) => {
+				//prevents the window from being killed by MacOS
+				ipc.send('close-editor')
+				if (!this._forceQuit) {
+					this._browserWindow.hide()
+					ev.preventDefault()
+				}
+			})
+		}
+
 
 		this._browserWindow.webContents.session.setPermissionRequestHandler(this._permissionRequestHandler)
 
@@ -70,30 +109,6 @@ export class MainWindow {
 
 		localShortcut.register('F12', () => this._toggleDevTools())
 		localShortcut.register('F5', () => this._browserWindow.loadURL(this._startFile))
-
-		this._browserWindow.loadURL(this._startFile)
-	}
-
-	show(mailtoArg: ?string) {
-		const contents = this._browserWindow.webContents
-		const devToolsState = contents.isDevToolsOpened()
-		if (this._browserWindow.isMinimized()) {
-			this._browserWindow.restore()
-			this._browserWindow.show()
-			//TODO: there has to be a better way. fix for #691
-			contents.toggleDevTools()
-			if (devToolsState) {
-				contents.openDevTools()
-			} else {
-				contents.closeDevTools()
-			}
-		} else {
-			this._browserWindow.focus()
-		}
-		if (mailtoArg) {
-			ipc.send('close-editor')
-			this._loadMailtoPath(mailtoArg)
-		}
 	}
 
 	// filesystem paths work differently than URLs
@@ -118,13 +133,6 @@ export class MainWindow {
 			return callback(false)
 		}
 		return callback(true)
-	}
-
-	_loadMailtoPath(mailtoArg: ?string): void {
-		const mailtoPath = (mailtoArg)
-			? "?requestedPath=%2Fmailto%23url%3D" + encodeURIComponent(mailtoArg)
-			: ""
-		this._browserWindow.loadURL(`${this._startFile}${mailtoPath}`)
 	}
 
 	_toggleDevTools(): void {

@@ -23,6 +23,9 @@ class IPC {
 	}
 
 	init(window: MainWindow) {
+		if (this.initialized().isFulfilled()) {
+			this._initialized = defer()
+		}
 		this._send = (...args: any) => window._browserWindow.webContents.send.apply(window._browserWindow.webContents, args)
 		this._on = (...args: any) => ipcMain.on.apply(ipcMain, args)
 		this._once = (...args: any) => ipcMain.once.apply(ipcMain, args)
@@ -38,11 +41,15 @@ class IPC {
 		ipcMain.on('protocol-message', (ev: Event, msg: string) => {
 			this._handleMessage(JSON.parse(msg))
 		})
+
+		this._initialized.promise.then(() => {
+			window._browserWindow.webContents.send('print-argv', process.argv)
+		})
 	}
 
 	_handleMessage(request: Object) {
 		if (request.type === "response") {
-			this._queue[request.id](request);
+			this._queue[request.id](request.value);
 		} else {
 			this._invokeMethod(request.type, request.args)
 			    .then(result => {
@@ -59,26 +66,10 @@ class IPC {
 
 		switch (method) {
 			case 'init':
-				console.log('init')
 				if (!this._initialized.promise.isFulfilled()) {
 					this._initialized.resolve()
 				}
-				d.resolve("desktop");
-				break
-			case 'getSize':
-				console.log('getSize:')
-				console.log(JSON.stringify(args, null, 2))
-				d.resolve(42)
-				break
-			case 'getName':
-				console.log('getName:')
-				console.log(JSON.stringify(args, null, 2))
-				d.resolve("Hans")
-				break
-			case 'getMimeType':
-				console.log('getMimeType:')
-				console.log(JSON.stringify(args, null, 2))
-				d.resolve("apple/orange")
+				d.resolve(process.platform);
 				break
 			default:
 				d.reject(new Error("Invalid Method invocation"))

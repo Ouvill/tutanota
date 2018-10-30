@@ -1,6 +1,6 @@
 // @flow
 import {autoUpdater} from 'electron-updater'
-import {notifier, NotificationResult} from './DesktopNotifier.js'
+import {NotificationResult, notifier} from './DesktopNotifier.js'
 import {lang} from './DesktopLocalizationProvider'
 
 class ElectronUpdater {
