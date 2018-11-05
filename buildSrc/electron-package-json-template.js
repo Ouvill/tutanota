@@ -16,6 +16,10 @@ module.exports = function (nameSuffix, version, targetUrl, iconPath, sign) {
 		"scripts": {
 			"start": "electron ."
 		},
+		"tutao": {
+			"pubKeyUrl": "https://raw.githubusercontent.com/tutao/tutanota/electron-client/tutao-pub.pem",
+			"separator": "\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> TLS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n"
+		},
 		"dependencies": {
 			"electron-updater": "^3.1.2",
 			"electron-localshortcut": "^3.1.0",
@@ -26,12 +30,12 @@ module.exports = function (nameSuffix, version, targetUrl, iconPath, sign) {
 			"electron": "^3.0.0"
 		},
 		"build": {
-			//"afterPack": "./buildSrc/builderHook.js",
-			//"afterSign": "./buildSrc/builderHook.js",
-			//"afterAllArtifactBuild": "./buildSrc/builderHook.js",
+			"afterAllArtifactBuild": "./buildSrc/afterAllArtifactBuild.js",
 			"icon": iconPath,
 			"appId": "de.tutao.tutanota",
-			"productName": nameSuffix.slice(1) + " Tutanota Desktop",
+			"productName": nameSuffix.length > 0
+				? nameSuffix.slice(1) + " Tutanota Desktop"
+				: "Tutanota Desktop",
 			"artifactName": "${name}-${version}-${os}.${ext}",
 			"protocols": [
 				{

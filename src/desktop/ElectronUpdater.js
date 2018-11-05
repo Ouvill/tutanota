@@ -18,6 +18,11 @@ class ElectronUpdater {
 
 		autoUpdater.on('update-downloaded', (info) => {
 			clearInterval(this._interval);
+
+			// TODO: insert signature verification step
+			//const pubKeyUrl = require(path.join(__dirname, '../..', 'package.json')).tutao.pubKeyUrl
+			//const separatorBuf = Buffer.from(require(path.join(__dirname, '../..', 'package.json')).tutao.separator)
+
 			notifier.showOneShot({
 				title: lang.get('updateAvailable_label', {"{version}": info.version}),
 				body: lang.get('clickToUpdate_msg'),
@@ -27,11 +32,14 @@ class ElectronUpdater {
 				}
 			})
 		})
-		autoUpdater.checkForUpdates()
 
-		this._interval = setInterval(() => {
+		if (true /* public key location should be reachable */) {
 			autoUpdater.checkForUpdates()
-		}, 300000)
+
+			this._interval = setInterval(() => {
+				autoUpdater.checkForUpdates()
+			}, 300000)
+		}
 	}
 }
 

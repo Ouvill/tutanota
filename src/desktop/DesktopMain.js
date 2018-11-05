@@ -27,7 +27,7 @@ if (process.argv.indexOf("-r") !== -1) {
 	            .catch(() => app.exit(1))
 } else { //normal start
 	if (!app.requestSingleInstanceLock()) {
-		app.exit()
+		app.exit(0)
 	}
 
 	app.on('window-all-closed', () => {
