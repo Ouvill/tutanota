@@ -53,6 +53,8 @@ declare module 'electron' {
 		send(BridgeMessage, any): void;
 		session: ElectronSession;
 		getURL(): string;
+		getZoomFactor((factor: number) => void): void;
+		setZoomFactor(factor: number): void;
 		openDevTools(opts?: {|mode: string|}): void;
 		isDevToolsOpened(): boolean;
 		closeDevTools(): void;

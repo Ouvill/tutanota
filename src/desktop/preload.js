@@ -28,6 +28,13 @@ function removeListener(msg, listener) {
 	return ipcRenderer.removeListener(msg, listener)
 }
 
+window.onmousewheel = (e) => {
+	if (e.ctrlKey) {
+		e.preventDefault()
+		window.tutao.nativeApp.invokeNative(new PreloadImports.Request('changeZoomFactor', [e.deltaY > 0 ? -10 : 10]))
+	}
+}
+
 window.nativeApp = {
 	invoke: (msg: string) => {sendMessage('protocol-message', msg)},
 	sendMessage: (msg: BridgeMessage, data: any) => sendMessage(msg, data),

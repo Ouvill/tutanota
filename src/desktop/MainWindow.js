@@ -13,6 +13,7 @@ export class MainWindow {
 	_startFile: string;
 	_browserWindow: BrowserWindow;
 	_forceQuit: boolean;
+	_currentZoomFactor: number;
 
 	constructor() {
 		this._forceQuit = false
@@ -39,6 +40,7 @@ export class MainWindow {
 	}
 
 	_createBrowserWindow() {
+		this._currentZoomFactor = 1
 		this._rewroteURL = false
 		let normalizedPath = path.join(__dirname, "..", "..", "desktop.html")
 		this._startFile = DesktopUtils.pathToFileURL(normalizedPath)
@@ -129,6 +131,17 @@ export class MainWindow {
 			}
 		}
 		return url
+	}
+
+	changeZoomFactor(amount: number) {
+		let newFactor = ((this._currentZoomFactor * 100) + amount) / 100
+		if (newFactor > 3) {
+			newFactor = 3
+		} else if (newFactor < 0.5) {
+			newFactor = 0.5
+		}
+		this._browserWindow.webContents.setZoomFactor(newFactor)
+		this._currentZoomFactor = newFactor
 	}
 
 	_permissionRequestHandler(webContents: WebContents, permission: ElectronPermission, callback: (boolean) => void) {

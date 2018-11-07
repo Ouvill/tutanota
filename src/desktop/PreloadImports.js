@@ -1,5 +1,6 @@
 // @flow
 import {stringToUtf8Uint8Array, uint8ArrayToBase64} from '../api/common/utils/Encoding.js'
+import {Request} from '../api/common/WorkerProtocol.js'
 
 /**
  * keep the import in DesktopMain and set up functions that are missing in node
@@ -16,6 +17,7 @@ function keep() {
  */
 const PreloadImports = {
 	stringToUtf8Uint8Array,
+	Request,
 	uint8ArrayToBase64,
 	keep
 }

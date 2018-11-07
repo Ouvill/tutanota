@@ -12,6 +12,7 @@ class IPC {
 	_initialized: DeferredObject<void>;
 	_requestId: number = 0;
 	_queue: {[string]: Function};
+	_window: MainWindow;
 
 	_send = () => console.log("ipc not initialized!")
 	_on = () => console.log("ipc not initialized!")
@@ -29,6 +30,7 @@ class IPC {
 		this._send = (...args: any) => window._browserWindow.webContents.send.apply(window._browserWindow.webContents, args)
 		this._on = (...args: any) => ipcMain.on.apply(ipcMain, args)
 		this._once = (...args: any) => ipcMain.once.apply(ipcMain, args)
+		this._window = window
 
 		ipcMain.on('show-window', () => {
 			window.show()
@@ -71,8 +73,14 @@ class IPC {
 				}
 				d.resolve(process.platform);
 				break
+			case 'changeZoomFactor':
+				this._initialized.promise.then(() => {
+					this._window.changeZoomFactor((args[0]: any))
+				})
+				d.resolve()
+				break
 			default:
-				d.reject(new Error("Invalid Method invocation"))
+				d.reject(new Error(`Invalid Method invocation: ${method}`))
 				break
 		}
 
