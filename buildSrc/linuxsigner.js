@@ -64,7 +64,7 @@ function signer(filePath) {
 
 function getPrivateKey() {
 	const lnk = process.env.LINUX_CSC_LINK
-	const pass = process.env.LINUX_CSC_PASSWORD
+	const pass = process.env.LINUX_CSC_KEY_PASSWORD
 	if (!lnk || !pass) {
 		throw new Error("can't sign linux client, missing LINUX_CSC_LINK or LINUX_CSC_PASSWORD env vars")
 	}
