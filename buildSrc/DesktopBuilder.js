@@ -45,12 +45,17 @@ function build(dirname, version, targets, updateUrl, nameSuffix) {
 			})
 		})
 		.then(() => {
+			const signatureFileName = fs.readdirSync(path.join(distDir, 'installers'))
+			                            .find((file => file.startsWith(content.name) && file.endsWith('.bin')))
+			if (!signatureFileName) { // linuxsigner wasn't called, there is no signature
+				return Promise.resolve()
+			}
 			console.log("Attaching signature to latest-linux.yml...")
 			const ymlPath = path.join(distDir, 'installers', 'latest-linux.yml')
 			let yml = jsyaml.safeLoad(fs.readFileSync(ymlPath, 'utf8'))
-			const signatureFileName = fs.readdirSync(path.join(distDir, 'installers'))
-			                            .find((file => file.startsWith(content.name) && file.endsWith('.bin')))
-			const signatureContent = fs.readFileSync(path.join(distDir, 'installers', signatureFileName))
+			const sigPath = path.join(distDir, 'installers', signatureFileName)
+			console.log("Writing signature to", sigPath)
+			const signatureContent = fs.readFileSync(sigPath)
 			yml.signature = signatureContent.toString('base64')
 			fs.writeFileSync(ymlPath, jsyaml.safeDump(yml), 'utf8')
 		})
