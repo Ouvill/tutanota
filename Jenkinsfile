@@ -44,6 +44,7 @@ pipeline {
 						unstash 'bundles'
 						withCredentials([string(credentialsId: 'WIN_CSC_KEY_PASSWORD', variable: 'PW')]){
 						    sh '''
+						    export JENKINS=TRUE
 						    export WIN_CSC_KEY_PASSWORD=${PW};
 						    export WIN_CSC_LINK="/opt/etc/comodo-codesign.p12";
 						    node dist -pw
@@ -85,7 +86,13 @@ pipeline {
 						sh 'rm -rf ./build/*'
 						unstash 'web_base'
 						unstash 'bundles'
-						sh 'node dist -pl ' + (params.RELEASE ? "" : "prod")
+						withCredentials([string(credentialsId: 'WIN_CSC_KEY_PASSWORD', variable: 'PW')]){
+							sh '''
+							export JENKINS=TRUE
+							export LINUX_CSC_KEY_PASSWORD=${PW};
+							export LINUX_CSC_LINK="/opt/etc/comodo-codesign.p12";
+							node dist -pl ''' + (params.RELEASE ? "" : "prod")
+						}
 						dir('build') {
 							stash includes: 'desktop*/*', name:'linux_installer'
 						}

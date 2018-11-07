@@ -3,13 +3,8 @@
  * This enables the App to verify the authenticity of the Updates, and
  * enables the User to verify the authenticity of their manually downloaded
  * AppImage with the openssl utility.
- * We use two signatures for this:
- *  the first one is embedded into the AppImage. This is used by the
- *  App to verify its updates after download
  *
- *  Format: [appImage, separator, signature].join()
- *
- *  should the location of the public key change, we can leave the URL to
+ *  Should the location of the public key change, we can leave the URL to
  *  the new location in place of the key
  *  (in the format :NEWURL: https://new.com/pub.pem :NEWURL:, to protect against format changes
  *  we don't control).
@@ -17,28 +12,34 @@
  *  that starts with '-----BEGIN PUBLIC KEY-----'
  *  or throw an error if it can't find the next step
  *
- *  the second signature signs the AppImage with the embedded signature #1 and is provided as a separate
- *  file (signature.bin) to the User to verify the initial download via
+ *  the AppImage signature is provided as a separate file (here: signature.bin) to the User
+ *  to verify the initial download via
  *
  *      # get public key from github
  *      wget https://raw.githubusercontent.com/tutao/tutanota/electron-client/tutao-pub.pem
+ *          or
+ *      curl https://raw.githubusercontent.com/tutao/tutanota/electron-client/tutao-pub.pem > tutao-pub.pem
  *      # validate the signature against public key
- *      openssl dgst -sha256 -verify tutao-pub.pem -signature signature.bin tutanota.AppImage
+ *      openssl dgst -sha512 -verify tutao-pub.pem -signature signature.bin tutanota.AppImage
  *
  * openssl should Print 'Verified OK' after the second command if the signature matches the certificate
  *
  * This prevents an attacker from getting forged AppImages/updates installed/applied
  *
- * get public key from cert:
- * openssl x509 -pubkey -noout -in cert.pem > pubkey.pem
+ * get pem cert from pfx:
+ * openssl pkcs12 -in comodo-codesign.pfx -clcerts -nokeys -out tutao-cert.pem
+ *
+ * get private key from pfx:
+ * openssl pkcs12 -in comodo-codesign.pfx -nocerts -out tutao.pem
+ *
+ * get public key from pem cert:
+ * openssl x509 -pubkey -noout -in tutao-cert.pem > tutao-pub.pem
  * */
 
-const crypto = require('crypto')
+const forge = require('node-forge')
 const Promise = require('bluebird')
 const fs = Promise.promisifyAll(require('fs-extra'))
 const path = require('path')
-// \n, 32 gt, space, 'TLS', space, 32 lt, \n
-const separatorBuf = Buffer.from('\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> TLS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n', 'utf8')
 
 /**
  *
@@ -48,62 +49,40 @@ const separatorBuf = Buffer.from('\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> TLS <<<<<<<
  *
  * @return object with paths to the generated files
  */
-function signer(args) {
-	const {filePath} = args
+function signer(filePath) {
 	console.log("Signing", path.basename(filePath), '...')
 	const dir = path.dirname(filePath)
-	const {filename, ext} = splitBasename(filePath)
-	const fileData = fs.readFileSync(filePath, null) //binary format
-
-	const fileOutPath = path.join(dir, filename + '-signed.' + ext)
+	const filename = path.basename(filePath)
+	const fileData = fs.readFileSync(filePath) //binary format
 	const sigOutPath = path.join(dir, filename + '-sig.bin')
-
-	const privateKey = {
-		key: fs.readFileSync(args.privateKeyPath, {encoding: 'utf-8'}),
-		passphrase: args.passPhrase
-	}
-
-	//create the first signature
-	const sign1 = crypto.createSign('SHA256')
-	sign1.update(fileData, null)
-	const sig1 = sign1.sign(privateKey, null).toString('hex')
-
-	//append first signature to appImage
-	const signedfileData = Buffer.concat([
-		fileData,
-		separatorBuf,
-		Buffer.from(sig1, 'utf-8')
-	])
-
-	fs.writeFileSync(fileOutPath, signedfileData, null)
-
-	// create the second (detached) signature
-	const sign2 = crypto.createSign('SHA256')
-	sign2.update(signedfileData, null)
-
-	const sig2 = sign2.sign(privateKey, null)
-	fs.writeFileSync(sigOutPath, sig2, null)
-
-	return {
-		signedFilePath: fileOutPath,
-		detachedSignaturePath: sigOutPath
-	}
+	const privateKey = getPrivateKey()
+	const md = forge.md.sha512.create()
+	md.update(fileData.toString('binary'))
+	const sig = Buffer.from(privateKey.sign(md), 'binary')
+	fs.writeFileSync(sigOutPath, sig, null)
 }
 
-function splitBasename(filePath) {
-	const parts = path.basename(filePath).split('.')
-	if (parts.length < 2) {
-		return {
-			filename: parts.join('.'),
-			ext: ''
-		}
-	} else {
-		const ext = parts.pop()
-		return {
-			filename: parts.join('.'),
-			ext: ext
-		}
+function getPrivateKey() {
+	const lnk = process.env.LINUX_CSC_LINK
+	const pass = process.env.LINUX_CSC_PASSWORD
+	if (!lnk || !pass) {
+		throw new Error("can't sign linux client, missing LINUX_CSC_LINK or LINUX_CSC_PASSWORD env vars")
 	}
+	const p12b64 = fs.readFileSync(lnk).toString('base64')
+	const p12Der = forge.util.decode64(p12b64)
+	const p12Asn1 = forge.asn1.fromDer(p12Der)
+	const p12 = forge.pkcs12.pkcs12FromAsn1(p12Asn1, pass)
+	/**
+	 * localKeyId was found by exporting the certificate via
+	 *      openssl pkcs12 -in comodo-codesign.pfx -clcerts -nokeys -out tutao-cert.pem
+	 *  and inspecting the resulting file.
+	 *  could use friendlyName as a key as well:
+	 *      p12.getBags({friendlyName: 'yada yada'})["friendlyName"]
+	 *  but that one contains funny characters.
+	 *  TODO: revise on cert renewal
+	 */
+	const bag = p12.getBags({localKeyIdHex: '6FEFEE4A93634B95DD82977143D69665CA9180D2'})["localKeyId"]
+	return bag[0].key
 }
 
 module.exports = signer

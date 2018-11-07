@@ -100,6 +100,14 @@ declare module 'bluebird' {
 	declare export default any;
 }
 
+declare module 'request' {
+	declare export default any;
+}
+
+declare module 'node-forge' {
+	declare export default any;
+}
+
 declare class AutoUpdater {
 	on: (AutoUpdaterEvent, (Event, ...Array<any>) => void) => void;
 	logger: {
@@ -112,9 +120,13 @@ declare class AutoUpdater {
 	};
 	checkForUpdatesAndNotify(): Promise<any>;
 	checkForUpdates(): Promise<UpdateCheckResult>;
+	getUpdateInfo(): Promise<UpdateInfo>;
+	downloadUpdate(): Promise<any>;
 	quitAndInstall(isSilent?: boolean, isForceRunAfter?: boolean): void;
 	autoInstallOnAppQuit: boolean;
+	downloadedUpdateHelper: any;
 	currentVersion: SemVer;
+	autoDownload: boolean;
 }
 
 // https://electronjs.org/docs/api/structures/notification-action
@@ -137,7 +149,8 @@ export type UpdateInfo = {
 	releaseName: string,
 	releaseNotes: string,
 	releaseDate: string,
-	stagingPercentage: Number
+	stagingPercentage: Number,
+	signature: string
 }
 
 export type SemVer = {

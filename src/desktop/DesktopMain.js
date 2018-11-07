@@ -1,4 +1,5 @@
 // @flow
+import {conf} from './DesktopConfigHandler'
 import {app} from 'electron'
 import {updater} from './ElectronUpdater.js'
 import {MainWindow} from './MainWindow.js'
@@ -10,7 +11,10 @@ import PreloadImports from './PreloadImports.js'
 
 let mainWindow: MainWindow
 PreloadImports.keep()
-app.setAppUserModelId("de.tutao.tutanota")
+conf.get("appUserModelId")
+    .then((id) => {
+	    app.setAppUserModelId(id)
+    })
 console.log("argv: ", process.argv)
 console.log("version:  ", app.getVersion())
 

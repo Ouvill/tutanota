@@ -16,15 +16,20 @@ module.exports = function (nameSuffix, version, targetUrl, iconPath, sign) {
 		"scripts": {
 			"start": "electron ."
 		},
-		"tutao": {
+		"tutao-config": {
 			"pubKeyUrl": "https://raw.githubusercontent.com/tutao/tutanota/electron-client/tutao-pub.pem",
-			"separator": "\n>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> TLS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<\n"
+			"pollingInterval": 30000,
+			// if this version checks its updates. use to prevent local builds from checking sigs.
+			"checkUpdateSignature": true || !!process.env.JENKINS,
+			"appUserModelId": "de.tutao.tutanota"
 		},
 		"dependencies": {
 			"electron-updater": "^3.1.2",
 			"electron-localshortcut": "^3.1.0",
 			"fs-extra": "1.0.0",
 			"bluebird": "3.5.2",
+			"request": "^2.88.0",
+			"node-forge": "^0.7.6"
 		},
 		"devDependencies": {
 			"electron": "^3.0.0"
