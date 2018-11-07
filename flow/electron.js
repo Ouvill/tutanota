@@ -23,6 +23,9 @@ declare module 'electron' {
 		hide(): void;
 		restore(): void;
 		show(): void;
+		maximize(): void;
+		unmaximize(): void;
+		isMaximized(): boolean;
 		loadFile(string): void;
 		loadURL(string): void;
 		isMinimized(): boolean;

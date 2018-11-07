@@ -109,7 +109,8 @@ export class MainWindow {
 				    this._browserWindow.loadURL(newURL)
 			    }
 		    })
-
+		//https://github.com/electron/electron/issues/2037
+		localShortcut.register('F11', () => this._toggleMaximize())
 		localShortcut.register('F12', () => this._toggleDevTools())
 		localShortcut.register('F5', () => this._browserWindow.loadURL(this._startFile))
 	}
@@ -158,6 +159,14 @@ export class MainWindow {
 			wc.closeDevTools()
 		} else {
 			wc.openDevTools({mode: 'undocked'})
+		}
+	}
+
+	_toggleMaximize(): void {
+		if (this._browserWindow.isMaximized()) {
+			this._browserWindow.unmaximize()
+		} else {
+			this._browserWindow.maximize()
 		}
 	}
 
