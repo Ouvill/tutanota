@@ -6,6 +6,7 @@ import * as localShortcut from 'electron-localshortcut'
 import open from './open.js'
 import DesktopUtils from './DesktopUtils.js'
 import path from 'path'
+import u2f from '../misc/u2f-api.js'
 
 export class MainWindow {
 	_rewroteURL: boolean;
@@ -113,7 +114,10 @@ export class MainWindow {
 
 	// filesystem paths work differently than URLs
 	_rewriteURL(url: string, isInPlace: boolean): string {
-		if (!url.startsWith(this._startFile)) {
+		if (
+			!url.startsWith(this._startFile) &&
+			!url.startsWith(`chrome-extension://${u2f.EXTENSION_ID}`)
+		) {
 			return this._startFile
 		}
 		if (url === this._startFile + '/login?noAutoLogin=true' && isInPlace) {
