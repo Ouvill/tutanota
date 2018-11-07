@@ -137,8 +137,10 @@ pipeline {
 					unstash 'linux_installer'
             	}
 				sh '''
-					target=`ls /opt/desktop-snapshot/tutanota-desktop*`;
-					ln -s "${target}" /opt/desktop-snapshot/tutanota-desktop-snapshot-linux.AppImage
+					targetAppImage=`ls /opt/desktop-snapshot/tutanota-desktop*.AppImage`;
+					targetSig=`ls /opt/desktop-snapshot/tutanota-desktop*.bin`;
+					ln -s "${targetAppImage}" /opt/desktop-snapshot/tutanota-desktop-snapshot-linux.AppImage;
+					ln -s "${targetSig}" /opt/desktop-snapshot/tutanota-desktop-snapshot-linux.AppImage-sig.bin;
 				'''
             }
         }
