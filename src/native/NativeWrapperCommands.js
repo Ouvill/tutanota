@@ -60,6 +60,16 @@ const keyboardSizeChanged = (msg: Request): Promise<void> => {
 	})
 }
 
+const print = (): Promise<void> => {
+	window.print()
+	return Promise.resolve()
+}
+
+const searchInPage = (): Promise<void> => {
+	window.nativeApp.searchInPage()
+	return Promise.resolve()
+}
+
 const sendTranslations = (msg: Request): Promise<any> => {
 	return _asyncImport('src/misc/LanguageViewModel.js').then(() => {
 		return {
@@ -102,5 +112,7 @@ export const desktopCommands = {
 	createMailEditor,
 	showAlertDialog,
 	openMailbox,
-	sendTranslations
+	sendTranslations,
+	print,
+	searchInPage
 }

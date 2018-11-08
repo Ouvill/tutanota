@@ -109,7 +109,9 @@ export class MainWindow {
 				    this._browserWindow.loadURL(newURL)
 			    }
 		    })
-		//https://github.com/electron/electron/issues/2037
+
+		localShortcut.register('Ctrl+F', () => this._searchPage())
+		localShortcut.register('Ctrl+P', () => this._printMail())
 		localShortcut.register('F11', () => this._toggleMaximize())
 		localShortcut.register('F12', () => this._toggleDevTools())
 		localShortcut.register('F5', () => this._browserWindow.loadURL(this._startFile))
@@ -168,6 +170,14 @@ export class MainWindow {
 		} else {
 			this._browserWindow.maximize()
 		}
+	}
+
+	_printMail() {
+		ipc.sendRequest('print', [])
+	}
+
+	_searchPage(): void {
+		ipc.sendRequest('searchInPage', [])
 	}
 
 	_refresh(): void {

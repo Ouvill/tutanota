@@ -61,6 +61,7 @@ declare module 'electron' {
 		openDevTools(opts?: {|mode: string|}): void;
 		isDevToolsOpened(): boolean;
 		closeDevTools(): void;
+		print(): void;
 		toggleDevTools(): void;
 		reloadIgnoringCache(): void;
 	}

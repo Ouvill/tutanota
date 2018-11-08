@@ -9,7 +9,11 @@ const app = remote.require('electron').app
 const PreloadImports = remote.require('./PreloadImports.js').default
 
 function sendMessage(msg, args) {
-	ipcRenderer.send(msg, args);
+	ipcRenderer.send(msg, args)
+}
+
+function searchInPage() {
+	console.log("received")
 }
 
 ipcRenderer.on('protocol-message', (ev, msg) => {
@@ -41,6 +45,7 @@ window.nativeApp = {
 	startListening: (msg: BridgeMessage, listener: Function) => receiveMessage(msg, listener),
 	stopListening: (msg: BridgeMessage, listener: Function) => removeListener(msg, listener),
 	getVersion: () => app.getVersion(),
+	searchInPage: () => {searchInPage()},
 }
 
 // window.focus() doesn't seem to be working right now, so we're replacing it

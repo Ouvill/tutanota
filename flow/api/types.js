@@ -162,6 +162,8 @@ type JsRequestType = 'createMailEditor'
 	| 'openMailbox'
 	| 'keyboardSizeChanged'
 	| 'sendTranslations'
+	| 'print'
+	| 'searchInPage'
 
 
 type Callback<T> = (err: ?Error, data?: T) => void
