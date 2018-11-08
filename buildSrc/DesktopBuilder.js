@@ -154,5 +154,6 @@ function babelCompile(src, srcFile) {
 }
 
 module.exports = {
-	build
+	build,
+	trace: transpile
 }

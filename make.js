@@ -8,6 +8,8 @@ const env = require('./buildSrc/env.js')
 const LaunchHtml = require('./buildSrc/LaunchHtml.js')
 const SystemConfig = require('./buildSrc/SystemConfig.js')
 const os = require("os")
+const spawn = require('child_process').spawn
+const desktopBuilder = require("./buildSrc/DesktopBuilder")
 
 const packageJSON = require('./package.json')
 const version = packageJSON.version
@@ -66,7 +68,7 @@ function prepareAssets() {
 		              return Promise.all([
 			              createHtml(env.create(SystemConfig.devConfig(true), targetUrl, version, "Browser")),
 			              createHtml(env.create(SystemConfig.devConfig(true), targetUrl, version, "App")),
-			              createHtml(env.create(SystemConfig.devConfig(true), targetUrl, version, "Desktop"))
+			              createHtml(env.create(SystemConfig.devConfig(false), targetUrl, version, "Desktop"))
 		              ])
 	              })
 }
@@ -75,14 +77,22 @@ function startDesktop() {
 	if (options.desktop) {
 		console.log("Building desktop client...")
 		console.log("Trying to start desktop client...")
-		const content = JSON.stringify(require('./buildSrc/electron-package-json-template.js')(
+		const packageJSON = require('./buildSrc/electron-package-json-template.js')(
 			"",
 			"0.0.1",
 			targetUrl,
 			path.join(__dirname, "/resources/desktop-icons/desktop-icon.png"),
 			false
-		))
+		)
+		const content = JSON.stringify(packageJSON)
 		return fs.writeFileAsync("./build/package.json", content, 'utf-8')
+		         .then(() => {
+			         return desktopBuilder.trace(
+				         ['./src/desktop/DesktopMain.js', './src/desktop/preload.js'],
+				         __dirname,
+				         path.join(__dirname, '/build/')
+			         )
+		         })
 		         .then(() => {
 			         spawn("/bin/sh", ["-c", "npm start"], {
 				         stdio: ['ignore', 'inherit', 'inherit'],
