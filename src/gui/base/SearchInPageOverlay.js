@@ -55,7 +55,7 @@ export class SearchInPageOverlay {
 
 	_getRect() {
 		return {
-			height: px(48),
+			height: px(size.navbar_height_mobile),
 			bottom: px(0),
 			right: px(0),
 			left: px(0)
