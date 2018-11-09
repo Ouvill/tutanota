@@ -79,6 +79,14 @@ class IPC {
 				})
 				d.resolve()
 				break
+			case 'findInPage':
+				this._window.findInPage(args)
+				d.resolve()
+				break
+			case 'stopFindInPage':
+				this._window.stopFindInPage()
+				d.resolve()
+				break
 			default:
 				d.reject(new Error(`Invalid Method invocation: ${method}`))
 				break

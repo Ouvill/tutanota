@@ -1159,6 +1159,10 @@ module.exports = {
 		"onlyAvailableForPremiumNotIncluded_msg": "This feature can only be ordered after upgrading to Premium. Please upgrade your account now.",
 		"sharedMailbox_label": "Shared mailboxes:",
 		"updateAvailable_label": "Update available ({version})",
-		"clickToUpdate_msg": "Click here if you want to apply it now, or let us auto install on quit."
+		"clickToUpdate_msg": "Click here if you want to apply it now, or let us auto install on quit.",
+		"previous_action": "Previous",
+		"ignoreCase_alt": "Ignore case",
+		"matchCase_alt": "Match case",
+		"searchPage_label": "Search Page..."
 	}
 }

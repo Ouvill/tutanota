@@ -7,13 +7,21 @@ import {ipcRenderer, remote} from 'electron'
  */
 const app = remote.require('electron').app
 const PreloadImports = remote.require('./PreloadImports.js').default
+const Menu = remote.Menu
+const MenuItem = remote.MenuItem
+
+const menu = new Menu()
+menu.append(new MenuItem({label: 'Copy', click() { console.log('item 1 clicked') }}))
+menu.append(new MenuItem({label: 'Cut', click() { console.log('item 2 clicked') }}))
+menu.append(new MenuItem({label: 'Paste', click() { console.log('item 3 clicked') }}))
+
+window.addEventListener('contextmenu', (e) => {
+	e.preventDefault()
+	menu.popup({window: remote.getCurrentWindow()})
+}, false)
 
 function sendMessage(msg, args) {
 	ipcRenderer.send(msg, args)
-}
-
-function searchInPage() {
-	console.log("received")
 }
 
 ipcRenderer.on('protocol-message', (ev, msg) => {
@@ -44,8 +52,7 @@ window.nativeApp = {
 	sendMessage: (msg: BridgeMessage, data: any) => sendMessage(msg, data),
 	startListening: (msg: BridgeMessage, listener: Function) => receiveMessage(msg, listener),
 	stopListening: (msg: BridgeMessage, listener: Function) => removeListener(msg, listener),
-	getVersion: () => app.getVersion(),
-	searchInPage: () => {searchInPage()},
+	getVersion: () => app.getVersion()
 }
 
 // window.focus() doesn't seem to be working right now, so we're replacing it

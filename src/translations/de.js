@@ -1158,6 +1158,10 @@ module.exports = {
 		"onlyAvailableForPremiumNotIncluded_msg": "Diese Funktion kann nur nach dem Wechsel auf Tutanota Premium gebucht werden. Bitte wechsel jetzt zu Premium!",
 		"sharedMailbox_label": "Geteilte Mailboxen:",
 		"updateAvailable_label": "Neue Version verfügbar ({version})",
-		"clickToUpdate_msg": "Hier klicken um sie sofort zu installieren."
+		"clickToUpdate_msg": "Hier klicken um sie sofort zu installieren.",
+		"previous_action": "Zurück",
+		"ignoreCase_alt": "Groß/Kleinschreibung ignorieren",
+		"matchCase_alt": "Groß/Kleinschreibung beachten",
+		"searchPage_label": "Seite durchsuchen..."
 	}
 }

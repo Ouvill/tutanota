@@ -110,7 +110,7 @@ export class MainWindow {
 			    }
 		    })
 
-		localShortcut.register('Ctrl+F', () => this._searchPage())
+		localShortcut.register('Ctrl+F', () => this._openFindInPage())
 		localShortcut.register('Ctrl+P', () => this._printMail())
 		localShortcut.register('F11', () => this._toggleMaximize())
 		localShortcut.register('F12', () => this._toggleDevTools())
@@ -147,6 +147,14 @@ export class MainWindow {
 		this._currentZoomFactor = newFactor
 	}
 
+	findInPage(args: Array<any>) {
+		this._browserWindow.webContents.findInPage(args[0], args[1])
+	}
+
+	stopFindInPage() {
+		this._browserWindow.webContents.stopFindInPage('clearSelection')
+	}
+
 	_permissionRequestHandler(webContents: WebContents, permission: ElectronPermission, callback: (boolean) => void) {
 		const url = webContents.getURL()
 		if (!(url.startsWith('file://') && (permission === 'notifications'))) {
@@ -176,8 +184,8 @@ export class MainWindow {
 		ipc.sendRequest('print', [])
 	}
 
-	_searchPage(): void {
-		ipc.sendRequest('searchInPage', [])
+	_openFindInPage(): void {
+		ipc.sendRequest('openFindInPage', [])
 	}
 
 	_refresh(): void {

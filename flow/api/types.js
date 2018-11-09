@@ -156,6 +156,8 @@ type NativeRequestType = 'init'
 	| 'saveBlob'
 	| 'putFileIntoDownloads'
 	| 'changeZoomFactor'
+	| 'findInPage'
+	| 'stopFindInPage'
 type JsRequestType = 'createMailEditor'
 	| 'handleBackPress'
 	| 'showAlertDialog'
@@ -163,7 +165,7 @@ type JsRequestType = 'createMailEditor'
 	| 'keyboardSizeChanged'
 	| 'sendTranslations'
 	| 'print'
-	| 'searchInPage'
+	| 'openFindInPage'
 
 
 type Callback<T> = (err: ?Error, data?: T) => void

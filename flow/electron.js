@@ -1,3 +1,7 @@
+/**
+ * this file is highly inaccurate, check the docs at electronjs.org
+ */
+
 declare module 'electron' {
 	declare export var app: {
 		on(AppEvent, (Event, ...Array<any>) => void): void,
@@ -64,6 +68,8 @@ declare module 'electron' {
 		print(): void;
 		toggleDevTools(): void;
 		reloadIgnoringCache(): void;
+		findInPage(searchString: string, opts: {forward: boolean, matchCase: boolean}): void;
+		stopFindInPage(action: "clearSelection" | "keepSelection" | "activateSelection"): void;
 	}
 
 	declare export class ElectronSession {

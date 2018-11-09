@@ -65,9 +65,11 @@ const print = (): Promise<void> => {
 	return Promise.resolve()
 }
 
-const searchInPage = (): Promise<void> => {
-	window.nativeApp.searchInPage()
-	return Promise.resolve()
+const openFindInPage = (): Promise<void> => {
+	return _asyncImport('src/gui/base/SearchInPageOverlay.js').then(module => {
+		module.searchInPageOverlay.open()
+		return Promise.resolve()
+	})
 }
 
 const sendTranslations = (msg: Request): Promise<any> => {
@@ -114,5 +116,5 @@ export const desktopCommands = {
 	openMailbox,
 	sendTranslations,
 	print,
-	searchInPage
+	openFindInPage
 }
