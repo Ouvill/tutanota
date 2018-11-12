@@ -1,8 +1,8 @@
 /**
- * Utility to codesign the finished AppImage.
+ * Utility to codesign the finished Installers.
  * This enables the App to verify the authenticity of the Updates, and
  * enables the User to verify the authenticity of their manually downloaded
- * AppImage with the openssl utility.
+ * Installer with the openssl utility.
  *
  *  Should the location of the public key change, we can leave the URL to
  *  the new location in place of the key
@@ -12,7 +12,7 @@
  *  that starts with '-----BEGIN PUBLIC KEY-----'
  *  or throw an error if it can't find the next step
  *
- *  the AppImage signature is provided as a separate file (here: signature.bin) to the User
+ *  the Installer signature is provided as a separate file (here: signature.bin) to the User
  *  to verify the initial download via
  *
  *      # get public key from github
@@ -20,11 +20,11 @@
  *          or
  *      curl https://raw.githubusercontent.com/tutao/tutanota/electron-client/tutao-pub.pem > tutao-pub.pem
  *      # validate the signature against public key
- *      openssl dgst -sha512 -verify tutao-pub.pem -signature signature.bin tutanota.AppImage
+ *      openssl dgst -sha512 -verify tutao-pub.pem -signature signature.bin tutanota.installer.ext
  *
  * openssl should Print 'Verified OK' after the second command if the signature matches the certificate
  *
- * This prevents an attacker from getting forged AppImages/updates installed/applied
+ * This prevents an attacker from getting forged Installers/updates installed/applied
  *
  * get pem cert from pfx:
  * openssl pkcs12 -in comodo-codesign.pfx -clcerts -nokeys -out tutao-cert.pem
@@ -49,24 +49,34 @@ const path = require('path')
  *
  * @return object with paths to the generated files
  */
-function signer(filePath) {
+function signer(filePath, target) {
 	console.log("Signing", path.basename(filePath), '...')
+	if (!['win', 'linux', 'mac'].includes(target)) {
+		throw new Error('invalid signing target: ' + target)
+	}
 	const dir = path.dirname(filePath)
-	const filename = path.basename(filePath)
-	const fileData = fs.readFileSync(filePath) //binary format
-	const sigOutPath = path.join(dir, filename + '-sig.bin')
-	const privateKey = getPrivateKey()
-	const md = forge.md.sha512.create()
-	md.update(fileData.toString('binary'))
-	const sig = Buffer.from(privateKey.sign(md), 'binary')
-	fs.writeFileSync(sigOutPath, sig, null)
+	let filename = path.basename(filePath).split('.')
+	filename.splice(-1, 1)
+	filename = filename.join('.')
+	try {
+		const fileData = fs.readFileSync(filePath) //binary format
+		const sigOutPath = path.join(dir, filename + '-sig.bin')
+		const lnk = process.env[target.toUpperCase() + "_CSC_LINK"]
+		const pass = process.env[target.toUpperCase() + "_CSC_KEY_PASSWORD"]
+		const privateKey = getPrivateKey(lnk, pass)
+		const md = forge.md.sha512.create()
+		md.update(fileData.toString('binary'))
+		const sig = Buffer.from(privateKey.sign(md), 'binary')
+		fs.writeFileSync(sigOutPath, sig, null)
+	} catch (e) {
+		console.log('Error:', e.message)
+	}
+
 }
 
-function getPrivateKey() {
-	const lnk = process.env.LINUX_CSC_LINK
-	const pass = process.env.LINUX_CSC_KEY_PASSWORD
+function getPrivateKey(lnk, pass) {
 	if (!lnk || !pass) {
-		throw new Error("can't sign linux client, missing LINUX_CSC_LINK or LINUX_CSC_PASSWORD env vars")
+		throw new Error("can't sign client, missing [TARGET]_CSC_LINK or [TARGET]_CSC_KEY_PASSWORD env vars")
 	}
 	const p12b64 = fs.readFileSync(lnk).toString('base64')
 	const p12Der = forge.util.decode64(p12b64)

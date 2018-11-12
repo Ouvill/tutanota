@@ -23,10 +23,9 @@ class ElectronUpdater {
 	start() {
 		conf.get("checkUpdateSignature")
 		    .then((checkUpdateSignature) => {
-			    const shouldCheckSignature = (process.platform === 'linux') && checkUpdateSignature
-			    autoUpdater.autoDownload = !shouldCheckSignature
+			    autoUpdater.autoDownload = !checkUpdateSignature
 			    autoUpdater.logger = this._logger
-			    if (shouldCheckSignature) {
+			    if (checkUpdateSignature) {
 				    conf.get("pubKeyUrl")
 				        .then(this._trackPublicKey)
 				        .then((pubKey) => {

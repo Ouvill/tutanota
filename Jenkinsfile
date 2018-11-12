@@ -30,9 +30,6 @@ pipeline {
             parallel {
 
                 stage('desktop-win') {
-               		when {
-                    	expression { params.RELEASE }
-                    }
                     agent {
                         label 'win'
                     }
@@ -57,9 +54,6 @@ pipeline {
                 }
 
                 stage('desktop-mac') {
-                	when {
-                    	expression { params.RELEASE }
-                    }
                     agent {
                         label 'mac'
                     }
@@ -69,7 +63,13 @@ pipeline {
 						sh 'rm -rf ./build/*'
 						unstash 'web_base'
 						unstash 'bundles'
-						sh 'node dist -pm'
+						withCredentials([string(credentialsId: 'WIN_CSC_KEY_PASSWORD', variable: 'PW')]){
+							sh '''
+							export JENKINS=TRUE
+							export MAC_CSC_KEY_PASSWORD=${PW};
+							export MAC_CSC_LINK="/opt/etc/comodo-codesign.p12";
+							node dist -pm ''' + (params.RELEASE ? "" : "prod")
+						}
 						dir('build') {
 							stash includes: 'desktop*/*', name:'mac_installer'
 						}
@@ -135,6 +135,8 @@ pipeline {
             	sh 'rm -f /opt/desktop-snapshot/*'
             	dir('/opt') {
 					unstash 'linux_installer'
+					unstash 'win_installer'
+					unstash 'mac_installer'
             	}
 				sh '''
 					targetAppImage=`ls /opt/desktop-snapshot/tutanota-desktop*.AppImage`;

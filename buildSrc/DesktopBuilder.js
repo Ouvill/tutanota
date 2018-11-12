@@ -45,13 +45,46 @@ function build(dirname, version, targets, updateUrl, nameSuffix) {
 			})
 		})
 		.then(() => {
+			//linux sig to yml
 			const signatureFileName = fs.readdirSync(path.join(distDir, 'installers'))
-			                            .find((file => file.startsWith(content.name) && file.endsWith('.bin')))
-			if (!signatureFileName) { // linuxsigner wasn't called, there is no signature
+			                            .find((file => file.startsWith(content.name) && file.endsWith('linux-sig.bin')))
+			if (!signatureFileName) { // there is no linux signature
 				return Promise.resolve()
 			}
 			console.log("Attaching signature to latest-linux.yml...")
 			const ymlPath = path.join(distDir, 'installers', 'latest-linux.yml')
+			let yml = jsyaml.safeLoad(fs.readFileSync(ymlPath, 'utf8'))
+			const sigPath = path.join(distDir, 'installers', signatureFileName)
+			console.log("Writing signature to", sigPath)
+			const signatureContent = fs.readFileSync(sigPath)
+			yml.signature = signatureContent.toString('base64')
+			fs.writeFileSync(ymlPath, jsyaml.safeDump(yml), 'utf8')
+		})
+		.then(() => {
+			//win sig to yml
+			const signatureFileName = fs.readdirSync(path.join(distDir, 'installers'))
+			                            .find((file => file.startsWith(content.name) && file.endsWith('win-sig.bin')))
+			if (!signatureFileName) { // there is no win signature
+				return Promise.resolve()
+			}
+			console.log("Attaching signature to latest.yml...")
+			const ymlPath = path.join(distDir, 'installers', 'latest.yml')
+			let yml = jsyaml.safeLoad(fs.readFileSync(ymlPath, 'utf8'))
+			const sigPath = path.join(distDir, 'installers', signatureFileName)
+			console.log("Writing signature to", sigPath)
+			const signatureContent = fs.readFileSync(sigPath)
+			yml.signature = signatureContent.toString('base64')
+			fs.writeFileSync(ymlPath, jsyaml.safeDump(yml), 'utf8')
+		})
+		.then(() => {
+			//mac sig to yml
+			const signatureFileName = fs.readdirSync(path.join(distDir, 'installers'))
+			                            .find((file => file.startsWith(content.name) && file.endsWith('mac-sig.bin')))
+			if (!signatureFileName) { // there is no linux signature
+				return Promise.resolve()
+			}
+			console.log("Attaching signature to latest-mac.yml...")
+			const ymlPath = path.join(distDir, 'installers', 'latest-mac.yml')
 			let yml = jsyaml.safeLoad(fs.readFileSync(ymlPath, 'utf8'))
 			const sigPath = path.join(distDir, 'installers', signatureFileName)
 			console.log("Writing signature to", sigPath)
