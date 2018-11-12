@@ -44,8 +44,7 @@ pipeline {
 						    export JENKINS=TRUE
 						    export WIN_CSC_KEY_PASSWORD=${PW};
 						    export WIN_CSC_LINK="/opt/etc/comodo-codesign.p12";
-						    node dist -pw
-						    '''
+						    node dist -pw ''' + (params.RELEASE ? "" : "prod")
 						}
 						dir('build') {
 							stash includes: 'desktop*/*', name:'win_installer'
