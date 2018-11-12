@@ -1,6 +1,3 @@
-/**
- * search bar for the Ctrl+F in-page search of the Desktop client
- */
 // @flow
 import m from 'mithril'
 import {logins} from '../../api/main/LoginController.js'
@@ -12,21 +9,22 @@ import {Keys} from "../../misc/KeyManager"
 import {assertMainOrNode} from "../../api/Env"
 import {Request} from "../../api/common/WorkerProtocol.js"
 import {lang} from "../../misc/LanguageViewModel"
-import stream from "mithril/stream/stream.js"
 import {transform} from "../animation/Animations"
+import {nativeApp} from "../../native/NativeWrapper.js"
 
 assertMainOrNode()
 
+/**
+ * search bar for the Ctrl+F in-page search of the Desktop client
+ * gets loaded asynchronously, shouldn't be in the web bundle
+ */
 export class SearchInPageOverlay {
 	_closeFunction: (() => void) | null;
 	_domInput: HTMLInputElement;
-	_skipNextBlur: boolean;
 	_matchCase = false;
-	onblur: Stream<*>;
 
 	constructor() {
 		this._closeFunction = null
-		this.onblur = stream()
 	}
 
 	open() {
@@ -47,7 +45,7 @@ export class SearchInPageOverlay {
 	close() {
 		if (this._closeFunction) {
 			this._closeFunction()
-			window.tutao.nativeApp.invokeNative(new Request("stopFindInPage", []))
+			nativeApp.invokeNative(new Request("stopFindInPage", []))
 			this._closeFunction = null
 		}
 		m.redraw()
@@ -69,16 +67,11 @@ export class SearchInPageOverlay {
 					this._domInput = vnode.dom
 				},
 				oninput: e => {
-					this._skipNextBlur = true
-					window.tutao.nativeApp.invokeNative(new Request("stopFindInPage", []))
-					if (this._domInput.value !== '') {
-						window.tutao.nativeApp.invokeNative(new Request("findInPage", [this._domInput.value, {foward: true, matchCase: this._matchCase}]))
-					} else {
-						window.focus()
-						this._domInput.focus()
-					}
+					nativeApp.invokeNative(new Request("findInPage", [this._domInput.value, {foward: true, matchCase: this._matchCase}]))
 				},
-				onblur: e => this.blur(e),
+				onchange: e => {
+					this._domInput.focus()
+				},
 				style: {
 					width: px(250),
 					top: 0,
@@ -95,10 +88,7 @@ export class SearchInPageOverlay {
 		let matchCaseButton = new Button("ignoreCase_alt",
 			() => {
 				this._matchCase = false
-				if (this._domInput.value !== "") {
-					window.tutao.nativeApp.invokeNative(new Request("stopFindInPage", []))
-					window.tutao.nativeApp.invokeNative(new Request("findInPage", [this._domInput.value, {forward: true, matchCase: this._matchCase}]))
-				}
+				nativeApp.invokeNative(new Request("findInPage", [this._domInput.value, {forward: true, matchCase: this._matchCase}]))
 				this._domInput.focus()
 			},
 			() => Icons.MatchCase
@@ -109,10 +99,7 @@ export class SearchInPageOverlay {
 		let ignoreCaseButton = new Button("matchCase_alt",
 			() => {
 				this._matchCase = true
-				if (this._domInput.value !== "") {
-					window.tutao.nativeApp.invokeNative(new Request("stopFindInPage", []))
-					window.tutao.nativeApp.invokeNative(new Request("findInPage", [this._domInput.value, {forward: true, matchCase: this._matchCase}]))
-				}
+				nativeApp.invokeNative(new Request("findInPage", [this._domInput.value, {forward: true, matchCase: this._matchCase}]))
 				this._domInput.focus()
 			},
 			() => Icons.MatchCase
@@ -120,23 +107,19 @@ export class SearchInPageOverlay {
 			.setSelected(() => false)
 			.disableBubbling()
 
-		let closeButton = new Button("close_alt", () => {
-			this.close()
-		}, () => Icons.Cancel)
-
 		let forwardButton = new Button("next_action", () => {
-			if (this._domInput.value !== '') {
-				window.tutao.nativeApp.invokeNative(new Request("findInPage", [this._domInput.value, {forward: true, matchCase: this._matchCase}]))
-			}
+			nativeApp.invokeNative(new Request("findInPage", [this._domInput.value, {forward: true, matchCase: this._matchCase}]))
 		}, () => Icons.ArrowForward)
 			.disableBubbling()
 
 		let backwardButton = new Button("previous_action", () => {
-			if (this._domInput.value !== '') {
-				window.tutao.nativeApp.invokeNative(new Request("findInPage", [this._domInput.value, {forward: false, matchCase: this._matchCase}]))
-			}
+			nativeApp.invokeNative(new Request("findInPage", [this._domInput.value, {forward: false, matchCase: this._matchCase}]))
 		}, () => Icons.ArrowBackward)
 			.disableBubbling()
+
+		let closeButton = new Button("close_alt", () => {
+			this.close()
+		}, () => Icons.Cancel)
 
 		return {
 			view: (vnode: Object) => {
@@ -149,7 +132,6 @@ export class SearchInPageOverlay {
 									if (keyCode === Keys.ESC.code) {
 										this.close()
 									}
-									// disable key bindings
 									e.stopPropagation()
 									return true
 								},
@@ -164,17 +146,6 @@ export class SearchInPageOverlay {
 					])
 			}
 		}
-	}
-
-	blur(e: MouseEvent) {
-		if (this._skipNextBlur) {
-			if (this._domInput) {
-				this._domInput.focus()
-			}
-		} else {
-			this.onblur(e)
-		}
-		this._skipNextBlur = false
 	}
 }
 

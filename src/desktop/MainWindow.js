@@ -148,11 +148,15 @@ export class MainWindow {
 	}
 
 	findInPage(args: Array<any>) {
-		this._browserWindow.webContents.findInPage(args[0], args[1])
+		if (args[0] !== '') {
+			this._browserWindow.webContents.findInPage(args[0], args[1])
+		} else {
+			this.stopFindInPage()
+		}
 	}
 
 	stopFindInPage() {
-		this._browserWindow.webContents.stopFindInPage('clearSelection')
+		this._browserWindow.webContents.stopFindInPage('keepSelection')
 	}
 
 	_permissionRequestHandler(webContents: WebContents, permission: ElectronPermission, callback: (boolean) => void) {
