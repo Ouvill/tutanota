@@ -7,13 +7,24 @@ import {ipcRenderer, remote} from 'electron'
  */
 const app = remote.require('electron').app
 const PreloadImports = remote.require('./PreloadImports.js').default
+const lang = PreloadImports.lang
+console.log("lang: ", lang)
 const Menu = remote.Menu
 const MenuItem = remote.MenuItem
 
+/**
+ * create the context menu
+ * @type {Electron.Menu}
+ */
 const menu = new Menu()
-menu.append(new MenuItem({label: 'Copy', click() { console.log('item 1 clicked') }}))
-menu.append(new MenuItem({label: 'Cut', click() { console.log('item 2 clicked') }}))
-menu.append(new MenuItem({label: 'Paste', click() { console.log('item 3 clicked') }}))
+lang.initialized.promise.then(() => {
+	menu.append(new MenuItem({label: lang.get("copy_action"), accelerator: "CmdOrCtrl+C", click() { document.execCommand('copy') }}))
+	menu.append(new MenuItem({label: lang.get("cut_action"), accelerator: "CmdOrCtrl+X", click() { document.execCommand('cut') }}))
+	menu.append(new MenuItem({label: lang.get("paste_action"), accelerator: "CmdOrCtrl+V", click() { document.execCommand('paste') }}))
+	menu.append(new MenuItem({type: 'separator'}))
+	menu.append(new MenuItem({label: lang.get("undo_action"), accelerator: "CmdOrCtrl+Z", click() { document.execCommand('undo') }}))
+	menu.append(new MenuItem({label: lang.get("redo_action"), accelerator: "CmdOrCtrl+Shift+Z", click() { document.execCommand('redo') }}))
+})
 
 window.addEventListener('contextmenu', (e) => {
 	e.preventDefault()

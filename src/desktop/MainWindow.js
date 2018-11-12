@@ -110,8 +110,8 @@ export class MainWindow {
 			    }
 		    })
 
-		localShortcut.register('Ctrl+F', () => this._openFindInPage())
-		localShortcut.register('Ctrl+P', () => this._printMail())
+		localShortcut.register('CommandOrControl+F', () => this._openFindInPage())
+		localShortcut.register('CommandOrControl+P', () => this._printMail())
 		localShortcut.register('F11', () => this._toggleMaximize())
 		localShortcut.register('F12', () => this._toggleDevTools())
 		localShortcut.register('F5', () => this._browserWindow.loadURL(this._startFile))

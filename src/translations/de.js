@@ -1162,6 +1162,11 @@ module.exports = {
 		"previous_action": "Zurück",
 		"ignoreCase_alt": "Groß/Kleinschreibung ignorieren",
 		"matchCase_alt": "Groß/Kleinschreibung beachten",
-		"searchPage_label": "Seite durchsuchen..."
+		"searchPage_label": "Seite durchsuchen...",
+		"copy:_action": "Kopieren",
+		"cut_action": "Ausschneiden",
+		"paste_action": "Einfügen",
+		"undo_action": "Rückgängig",
+		"redo_action": "Wiederholen"
 	}
 }

@@ -1,8 +1,11 @@
 // @flow
 import {ipc} from './IPC.js'
+import type {DeferredObject} from "../api/common/utils/Utils"
+import {defer} from "../api/common/utils/Utils"
 
 class DesktopLocalizationProvider {
 
+	initialized: DeferredObject<void> = defer();
 	translations: Object;
 	fallback: Object;
 	code: string;
@@ -13,6 +16,7 @@ class DesktopLocalizationProvider {
 	init = (): Promise<void> => {
 		return ipc.sendRequest('sendTranslations', [])
 		          .then(this._setTranslations)
+		          .then(() => this.initialized.resolve())
 	}
 
 	_setTranslations = (translations: any) => {
