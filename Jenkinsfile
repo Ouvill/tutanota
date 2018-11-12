@@ -151,7 +151,7 @@ pipeline {
 					targetZip=`ls /opt/desktop-snapshot/tutanota-desktop*.zip`;
 					targetZipSig=`ls /opt/desktop-snapshot/tutanota-desktop*mac-sig.bin`;
 					ln -s "${targetZip}" /opt/desktop-snapshot/tutanota-desktop-snapshot-mac.zip;
-					ln -s "${targetZipSig}" /opt/desktop-snapshot/tutanota-desktop-snapshot-linux-sig.bin;
+					ln -s "${targetZipSig}" /opt/desktop-snapshot/tutanota-desktop-snapshot-mac-sig.bin;
 				'''
             }
         }
