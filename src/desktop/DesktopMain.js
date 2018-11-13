@@ -45,7 +45,11 @@ if (process.argv.indexOf("-r") !== -1) {
 		if (!url.startsWith('mailto:')) {
 			return
 		}
-		process.argv.push(url)
+		if (mainWindow) {
+			handleMailto(url)
+		} else {
+			process.argv.push(url)
+		}
 	})
 
 	app.on('activate', () => {
