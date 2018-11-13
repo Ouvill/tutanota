@@ -1,7 +1,7 @@
 // @flow
 import {ipc} from './IPC.js'
 import type {ElectronPermission} from 'electron'
-import {app, BrowserWindow, WebContents} from 'electron'
+import {app, BrowserWindow, nativeImage, WebContents} from 'electron'
 import * as localShortcut from 'electron-localshortcut'
 import open from './open.js'
 import DesktopUtils from './DesktopUtils.js'
@@ -45,9 +45,18 @@ export class MainWindow {
 		let normalizedPath = path.join(__dirname, "..", "..", "desktop.html")
 		this._startFile = DesktopUtils.pathToFileURL(normalizedPath)
 		console.log("startFile: ", this._startFile)
+		let trayIcon
+		if (process.platform === 'darwin') {
+			trayIcon = nativeImage.createFromPath(path.join((process: any).resourcesPath, 'icons/logo-solo-red.icns'))
+		} else if (process.platform === 'win32') {
+			trayIcon = nativeImage.createFromPath(path.join((process: any).resourcesPath, 'icons/logo-solo-red.png.ico'))
+		} else {
+			trayIcon = nativeImage.createFromPath(path.join((process: any).resourcesPath, 'icons/logo-solo-red-small.png'))
+		}
 		this._browserWindow = new BrowserWindow({
 			// electron process global has additional properties
-			icon: path.join((process: any).resourcesPath, 'icons/desktop-icon.png'),
+			//icon: path.join((process: any).resourcesPath, 'icons/desktop-icon-small.png'),
+			icon: trayIcon,
 			width: 1280,
 			height: 800,
 			autoHideMenuBar: true,

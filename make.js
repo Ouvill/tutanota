@@ -81,7 +81,7 @@ function startDesktop() {
 			"",
 			"0.0.1",
 			targetUrl,
-			path.join(__dirname, "/resources/desktop-icons/desktop-icon.png"),
+			path.join(__dirname, "/resources/desktop-icons/logo-solo-red.png"),
 			false
 		)
 		const content = JSON.stringify(packageJSON)
