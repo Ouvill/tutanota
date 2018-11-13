@@ -56,7 +56,7 @@ export class SettingsView implements CurrentView {
 		]
 
 		if (isDesktop()) {
-			this._userFolders.push(new SettingsFolder("desktop_label", () => BootIcons.Heart, "desktop", () => new DesktopSettingsViewer()))
+			this._userFolders.push(new SettingsFolder("desktop_label", () => Icons.Desktop, "desktop", () => new DesktopSettingsViewer()))
 		}
 
 		this._adminFolders = []
