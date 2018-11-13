@@ -45,7 +45,7 @@ if (process.argv.indexOf("-r") !== -1) {
 		if (!url.startsWith('mailto:')) {
 			return
 		}
-		handleMailto(url)
+		process.argv.push(url)
 	})
 
 	app.on('activate', () => {
@@ -78,15 +78,16 @@ function main() {
 }
 
 function handleArgv() {
-	handleMailto(process.argv.find((arg) => arg.startsWith('mailto')))
+	const mailtoUrl = process.argv.find((arg) => arg.startsWith('mailto'))
+	if (mailtoUrl) {
+		process.argv.splice(process.argv.indexOf(mailtoUrl), 1)
+		handleMailto(mailtoUrl)
+	}
 }
 
 function handleMailto(mailtoArg?: string) {
 	if (mailtoArg) {
 		/*[filesUris, text, addresses, subject, mailToUrl]*/
-		if (!mainWindow) {
-			createMainWindow()
-		}
 		mainWindow.show()
 		ipc.sendRequest('createMailEditor', [[], "", "", "", mailtoArg])
 	}
