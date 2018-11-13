@@ -7,10 +7,11 @@ import stream from "mithril/stream/stream.js"
 import {nativeApp} from '../native/NativeWrapper.js'
 import {Request} from "../api/common/WorkerProtocol.js"
 import {showProgressDialog} from "../gui/base/ProgressDialog.js"
+import {noOp} from "../api/common/utils/Utils"
 
 assertMainOrNode()
 
-export class DesktopSettingsViewer {
+export class DesktopSettingsViewer implements UpdatableSettingsViewer {
 	view: Function;
 
 	_setDefaultMailtoHandlerDropdown: DropDownSelector<boolean>;
@@ -53,4 +54,8 @@ export class DesktopSettingsViewer {
 			return nativeApp.invokeNative(new Request('unregisterMailto', []))
 		}
 	}
+
+	// this is all local for now
+	entityEventsReceived = noOp
+	addButtonClicked = noOp
 }
