@@ -84,6 +84,9 @@ function handleArgv() {
 function handleMailto(mailtoArg?: string) {
 	if (mailtoArg) {
 		/*[filesUris, text, addresses, subject, mailToUrl]*/
+		if (!mainWindow) {
+			createMainWindow()
+		}
 		mainWindow.show()
 		ipc.sendRequest('createMailEditor', [[], "", "", "", mailtoArg])
 	}
