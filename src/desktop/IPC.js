@@ -94,7 +94,9 @@ class IPC {
 					.then(() => {
 						d.resolve()
 					})
-					.catch(e => console.log("Mailto registration:", e.message))
+					.catch(e => {
+						d.reject(new Error('mailto unregistration failed'))
+					})
 				break
 			case 'unregisterMailto':
 				DesktopUtils
@@ -102,7 +104,9 @@ class IPC {
 					.then(() => {
 						d.resolve()
 					})
-					.catch(e => console.log("Mailto registration:", e.message))
+					.catch(e => {
+						d.reject(new Error('mailto registration failed'))
+					})
 				break
 			case 'checkMailto':
 				DesktopUtils

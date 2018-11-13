@@ -31,7 +31,6 @@ export class DesktopSettingsViewer {
 
 		nativeApp.invokeNative(new Request('checkMailto', []))
 		         .then(v => {
-			         console.log("checkMailto result:", v)
 			         this._isDefaultMailtoHandler = v
 			         this._setDefaultMailtoHandlerDropdown.selectedValue(v)
 			         m.redraw()

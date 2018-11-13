@@ -51,7 +51,9 @@ export default class DesktopUtils {
 					? Promise.resolve()
 					: Promise.reject()
 			case "linux":
-				return Promise.resolve()
+				return app.setAsDefaultProtocolClient("mailto")
+					? Promise.resolve()
+					: Promise.reject()
 			default:
 				return Promise.reject(new Error("Invalid process.platform"))
 		}
@@ -74,7 +76,9 @@ export default class DesktopUtils {
 					? Promise.resolve()
 					: Promise.reject()
 			case "linux":
-				return Promise.resolve()
+				return app.removeAsDefaultProtocolClient("mailto")
+					? Promise.resolve()
+					: Promise.reject()
 			default:
 				return Promise.reject(new Error(`invalid platform: ${process.platform}`))
 		}

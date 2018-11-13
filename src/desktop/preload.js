@@ -6,6 +6,7 @@ import {ipcRenderer, remote} from 'electron'
  * in the main thread.
  */
 const app = remote.require('electron').app
+const clipboard = remote.require('electron').clipboard
 const PreloadImports = remote.require('./PreloadImports.js').default
 const lang = PreloadImports.lang
 const Menu = remote.Menu
@@ -16,10 +17,12 @@ const MenuItem = remote.MenuItem
  * @type {Electron.Menu}
  */
 const menu = new Menu()
+let pasteItem
 lang.initialized.promise.then(() => {
+	pasteItem = new MenuItem({label: lang.get("paste_action"), accelerator: "CmdOrCtrl+V", click() { document.execCommand('paste') }})
 	menu.append(new MenuItem({label: lang.get("copy_action"), accelerator: "CmdOrCtrl+C", click() { document.execCommand('copy') }}))
 	menu.append(new MenuItem({label: lang.get("cut_action"), accelerator: "CmdOrCtrl+X", click() { document.execCommand('cut') }}))
-	menu.append(new MenuItem({label: lang.get("paste_action"), accelerator: "CmdOrCtrl+V", click() { document.execCommand('paste') }}))
+	menu.append(pasteItem)
 	menu.append(new MenuItem({type: 'separator'}))
 	menu.append(new MenuItem({label: lang.get("undo_action"), accelerator: "CmdOrCtrl+Z", click() { document.execCommand('undo') }}))
 	menu.append(new MenuItem({label: lang.get("redo_action"), accelerator: "CmdOrCtrl+Shift+Z", click() { document.execCommand('redo') }}))
@@ -27,6 +30,7 @@ lang.initialized.promise.then(() => {
 
 window.addEventListener('contextmenu', (e) => {
 	e.preventDefault()
+	pasteItem.enabled = clipboard.readText().length > 0
 	menu.popup({window: remote.getCurrentWindow()})
 }, false)
 
