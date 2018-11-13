@@ -4,6 +4,7 @@ import {MainWindow} from './MainWindow'
 import {defer} from '../api/common/utils/Utils.js'
 import type {DeferredObject} from "../api/common/utils/Utils"
 import {errorToObj} from "../api/common/WorkerProtocol"
+import DesktopUtils from "../desktop/DesktopUtils"
 
 /**
  * node-side endpoint for communication between the renderer thread and the node thread
@@ -86,6 +87,27 @@ class IPC {
 			case 'stopFindInPage':
 				this._window.stopFindInPage()
 				d.resolve()
+				break
+			case 'registerMailto':
+				DesktopUtils
+					.registerAsMailtoHandler(true)
+					.then(() => {
+						d.resolve()
+					})
+					.catch(e => console.log("Mailto registration:", e.message))
+				break
+			case 'unregisterMailto':
+				DesktopUtils
+					.unregisterAsMailtoHandler(true)
+					.then(() => {
+						d.resolve()
+					})
+					.catch(e => console.log("Mailto registration:", e.message))
+				break
+			case 'checkMailto':
+				DesktopUtils
+					.checkIsMailtoHandler()
+					.then(v => d.resolve(v))
 				break
 			default:
 				d.reject(new Error(`Invalid Method invocation: ${method}`))

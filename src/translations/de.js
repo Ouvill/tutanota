@@ -1167,6 +1167,12 @@ module.exports = {
 		"cut_action": "Ausschneiden",
 		"paste_action": "Einfügen",
 		"undo_action": "Rückgängig",
-		"redo_action": "Wiederholen"
+		"redo_action": "Wiederholen",
+		"desktop_label": "Desktop",
+		"registered_label": "Registriert",
+		"unregistered_label": "Unregistriert",
+		"defaultMailHandler_msg": "Registriere Tutanota Desktop als das Standard-Mailprogramm, z.B. um mailto Links zu öffnen. Diese Aktion könnte Administratorrechte erfordern.",
+		"defaultMailHandler_label": "Standardprogramm für E-mail",
+		"desktopSettings_label": "Desktop-Einstellungen"
 	}
 }

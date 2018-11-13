@@ -30,7 +30,12 @@ export default class DesktopUtils {
 		return urlFromPath.trim()
 	}
 
+	static checkIsMailtoHandler(): Promise<boolean> {
+		return Promise.resolve(app.isDefaultProtocolClient("mailto"))
+	}
+
 	static registerAsMailtoHandler(tryToElevate: boolean): Promise<void> {
+		console.log("trying to register...")
 		switch (process.platform) {
 			case "win32":
 				return checkForAdminStatus()
@@ -53,6 +58,7 @@ export default class DesktopUtils {
 	}
 
 	static unregisterAsMailtoHandler(tryToElevate: boolean): Promise<void> {
+		console.log("trying to unregister...")
 		switch (process.platform) {
 			case "win32":
 				return checkForAdminStatus()
@@ -64,7 +70,9 @@ export default class DesktopUtils {
 						}
 					})
 			case "darwin":
-				return Promise.resolve()
+				return app.removeAsDefaultProtocolClient("mailto")
+					? Promise.resolve()
+					: Promise.reject()
 			case "linux":
 				return Promise.resolve()
 			default:

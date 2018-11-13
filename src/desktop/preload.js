@@ -8,7 +8,6 @@ import {ipcRenderer, remote} from 'electron'
 const app = remote.require('electron').app
 const PreloadImports = remote.require('./PreloadImports.js').default
 const lang = PreloadImports.lang
-console.log("lang: ", lang)
 const Menu = remote.Menu
 const MenuItem = remote.MenuItem
 
@@ -36,7 +35,7 @@ function sendMessage(msg, args) {
 }
 
 ipcRenderer.on('protocol-message', (ev, msg) => {
-	window.tutao.nativeApp._nativeQueue._handleMessage(msg)
+	window.tutao.nativeApp.handleMessageObject(msg)
 })
 
 ipcRenderer.on('print-argv', (ev, msg) => {

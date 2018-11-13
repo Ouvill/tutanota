@@ -1168,6 +1168,12 @@ module.exports = {
 		"cut_action": "Cut",
 		"paste_action": "Paste",
 		"undo_action": "Undo",
-		"redo_action": "Redo"
+		"redo_action": "Redo",
+		"desktop_label": "Desktop",
+		"registered_label": "Registered",
+		"unregistered_label": "Unregistered",
+		"defaultMailHandler_msg": "Register Tutanota Desktop as the default email handler, e.g. to open mailto links. This operation may require administrator permissions.",
+		"defaultMailHandler_label": "Default Email Handler",
+		"desktopSettings_label": "Desktop Settings"
 	}
 }

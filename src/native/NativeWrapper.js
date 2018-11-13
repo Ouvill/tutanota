@@ -69,12 +69,19 @@ class NativeWrapper {
 
 	/**
 	 * invoked via eval()-type call (App)
-	 * bypassed by the preload script (Desktop)
 	 * @param msg64
 	 */
 	handleMessageFromNative(msg64: string) {
 		const msg = utf8Uint8ArrayToString(base64ToUint8Array(msg64))
 		neverNull(this._nativeQueue)._handleMessage(JSON.parse(msg))
+	}
+
+	/**
+	 * used by the preload script to save on encoding
+	 * @param msg
+	 */
+	handleMessageObject = (msg: any) => {
+		neverNull(this._nativeQueue)._handleMessage(msg)
 	}
 
 	_replacement(char: string) {
