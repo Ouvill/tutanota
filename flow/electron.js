@@ -18,6 +18,7 @@ declare module 'electron' {
 	declare export var remote: any;
 	declare export var ipcRenderer: any;
 	declare export var ipcMain: any;
+	declare export var nativeImage: any;
 
 	declare export class BrowserWindow {
 		// https://github.com/electron/electron/blob/master/docs/api/browser-window.md#new-browserwindowoptions
