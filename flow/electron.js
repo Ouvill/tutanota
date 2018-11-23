@@ -24,6 +24,7 @@ declare module 'electron' {
 		// https://github.com/electron/electron/blob/master/docs/api/browser-window.md#new-browserwindowoptions
 		constructor(any): BrowserWindow;
 		on(BrowserWindowEvent, (Event, ...Array<any>) => void): BrowserWindow;
+		once(BrowserWindowEvent, (Event, ...Array<any>) => void): BrowserWindow;
 		focus(): void;
 		hide(): void;
 		restore(): void;

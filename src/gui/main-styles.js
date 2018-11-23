@@ -3,7 +3,7 @@ import {styles} from "./styles"
 import {px, size} from "./size"
 import {client} from "../misc/ClientDetector"
 import {noselect, position_absolute, positionValue} from "./mixins"
-import {assertMainOrNodeBoot, isAdminClient, isApp} from "../api/Env"
+import {assertMainOrNodeBoot, isAdminClient, isApp, isDesktop} from "../api/Env"
 import {theme} from "./theme.js"
 import {BrowserType} from "../misc/ClientConstants"
 
@@ -15,6 +15,33 @@ export function requiresStatusBarHack() {
 
 styles.registerStyle('main', () => {
 	return {
+
+		"a:after": isDesktop() ? {
+			"z-index": -100,
+			"font-size": "small",
+			"padding-left": px(size.hpad_small),
+			"padding-right": px(size.hpad_small),
+			"position": "fixed",
+			"bottom": px(size.vpad_xs),
+			"left": px(size.vpad_xs),
+			"text-align": "center",
+			"color": theme.content_bg,
+			"text-decoration": "none",
+			"background-color": theme.content_fg,
+			"border": "1px solid " + theme.content_bg,
+			"content": "attr(href)",
+			"opacity": 0,
+			"transition:opacity": ".1s linear",
+			"font-family": "monospace"
+		} : {},
+
+		"a:hover:after": isDesktop() ? {
+			"opacity": 1,
+			"transition:opacity": ".2s linear",
+		} : {},
+
+		"a:hover:after, a:visited:after, a:link:after, a:active:after": isDesktop() ? {"text-decoration": "none"} : {},
+
 		"*:not(input):not(textarea)": isAdminClient() ? {} : {
 			"user-select": "none", /* disable selection/Copy for UI elements*/
 			"-ms-user-select": "none",

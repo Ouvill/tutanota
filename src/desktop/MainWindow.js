@@ -57,6 +57,7 @@ export class MainWindow {
 			// electron process global has additional properties
 			//icon: path.join((process: any).resourcesPath, 'icons/desktop-icon-small.png'),
 			icon: trayIcon,
+			show: false,
 			width: 1280,
 			height: 800,
 			autoHideMenuBar: true,
@@ -76,6 +77,11 @@ export class MainWindow {
 		})
 
 		ipc.init(this)
+
+		this._browserWindow.once('ready-to-show', () => {
+			this._browserWindow.show()
+			ipc.send('ready-to-show')
+		})
 
 		// user clicked 'x' button
 		if (process.platform !== "darwin") {

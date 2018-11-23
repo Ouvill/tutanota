@@ -42,7 +42,7 @@ ipcRenderer.on('protocol-message', (ev, msg) => {
 	window.tutao.nativeApp.handleMessageObject(msg)
 })
 
-ipcRenderer.on('print-argv', (ev, msg) => {
+ipcRenderer.once('print-argv', (ev, msg) => {
 	console.log("node argv:", msg)
 })
 
