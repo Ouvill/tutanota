@@ -4,13 +4,13 @@ import {logins} from '../../api/main/LoginController.js'
 import {displayOverlay} from './Overlay'
 import {px, size} from "../size"
 import {Icons} from "./icons/Icons"
-import {Button} from "./Button"
 import {Keys} from "../../misc/KeyManager"
 import {assertMainOrNode} from "../../api/Env"
 import {Request} from "../../api/common/WorkerProtocol.js"
 import {lang} from "../../misc/LanguageViewModel"
 import {transform} from "../animation/Animations"
 import {nativeApp} from "../../native/NativeWrapper.js"
+import {ButtonN, ButtonType} from "./ButtonN"
 
 assertMainOrNode()
 
@@ -85,41 +85,41 @@ export class SearchInPageOverlay {
 
 	_getComponent(): VirtualElement {
 
-		let matchCaseButton = new Button("ignoreCase_alt",
-			() => {
-				this._matchCase = false
-				nativeApp.invokeNative(new Request("findInPage", [this._domInput.value, {forward: true, matchCase: this._matchCase}]))
-				this._domInput.focus()
-			},
-			() => Icons.MatchCase
-		)
-			.setSelected(() => true)
-			.disableBubbling()
-
-		let ignoreCaseButton = new Button("matchCase_alt",
-			() => {
+		let caseButtonAttrs = {
+			label: "matchCase_alt",
+			icon: () => Icons.MatchCase,
+			type: ButtonType.Action,
+			noBubble: true,
+			isSelected: () => this._matchCase,
+			click: () => {
 				this._matchCase = true
 				nativeApp.invokeNative(new Request("findInPage", [this._domInput.value, {forward: true, matchCase: this._matchCase}]))
 				this._domInput.focus()
 			},
-			() => Icons.MatchCase
-		)
-			.setSelected(() => false)
-			.disableBubbling()
+		}
 
-		let forwardButton = new Button("next_action", () => {
-			nativeApp.invokeNative(new Request("findInPage", [this._domInput.value, {forward: true, matchCase: this._matchCase}]))
-		}, () => Icons.ArrowForward)
-			.disableBubbling()
+		let forwardButtonAttrs = {
+			label: "next_action",
+			icon: () => Icons.ArrowForward,
+			type: ButtonType.Action,
+			noBubble: true,
+			click: () => nativeApp.invokeNative(new Request("findInPage", [this._domInput.value, {forward: true, matchCase: this._matchCase}])),
+		}
 
-		let backwardButton = new Button("previous_action", () => {
-			nativeApp.invokeNative(new Request("findInPage", [this._domInput.value, {forward: false, matchCase: this._matchCase}]))
-		}, () => Icons.ArrowBackward)
-			.disableBubbling()
+		let backwardButtonAttrs = {
+			label: "previous_action",
+			icon: () => Icons.ArrowBackward,
+			type: ButtonType.Action,
+			noBubble: true,
+			click: () => nativeApp.invokeNative(new Request("findInPage", [this._domInput.value, {forward: false, matchCase: this._matchCase}])),
+		}
 
-		let closeButton = new Button("close_alt", () => {
-			this.close()
-		}, () => Icons.Cancel)
+		let closeButtonAttrs = {
+			label: "close_alt",
+			icon: () => Icons.Cancel,
+			type: ButtonType.Action,
+			click: () => this.close(),
+		}
 
 		return {
 			view: (vnode: Object) => {
@@ -138,11 +138,11 @@ export class SearchInPageOverlay {
 							},
 							[
 								this._inputField(),
-								m(backwardButton),
-								m(forwardButton),
-								m(this._matchCase ? matchCaseButton : ignoreCaseButton)
+								m(ButtonN, backwardButtonAttrs),
+								m(ButtonN, forwardButtonAttrs),
+								m(ButtonN, caseButtonAttrs)
 							]),
-						m(closeButton)
+						m(ButtonN, closeButtonAttrs)
 					])
 			}
 		}
