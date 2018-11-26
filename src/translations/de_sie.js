@@ -1164,7 +1164,7 @@ module.exports = {
 		"ignoreCase_alt": "Groß/Kleinschreibung ignorieren",
 		"matchCase_alt": "Groß/Kleinschreibung beachten",
 		"searchPage_label": "Seite durchsuchen...",
-		"copy:_action": "Kopieren",
+		"copyLink_action": "Linkaddresse kopieren",
 		"cut_action": "Ausschneiden",
 		"paste_action": "Einfügen",
 		"undo_action": "Rückgängig",

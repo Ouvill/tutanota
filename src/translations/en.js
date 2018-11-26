@@ -1164,7 +1164,7 @@ module.exports = {
 		"ignoreCase_alt": "Ignore case",
 		"matchCase_alt": "Match case",
 		"searchPage_label": "Search Page...",
-		"copy:_action": "Copy",
+		"copyLink_action": "Copy Link Address",
 		"cut_action": "Cut",
 		"paste_action": "Paste",
 		"undo_action": "Undo",

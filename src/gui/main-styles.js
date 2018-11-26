@@ -16,11 +16,12 @@ export function requiresStatusBarHack() {
 styles.registerStyle('main', () => {
 	return {
 
-		"a:after": isDesktop() ? {
-			"z-index": -100,
-			"font-size": "small",
+		"#link-tt": isDesktop() ? {
+			"pointer-events": "none",
+			"font-size": px(size.font_size_small),
 			"padding-left": px(size.hpad_small),
 			"padding-right": px(size.hpad_small),
+			"padding-top": px(size.vpad_xs),
 			"position": "fixed",
 			"bottom": px(size.vpad_xs),
 			"left": px(size.vpad_xs),
@@ -29,18 +30,15 @@ styles.registerStyle('main', () => {
 			"text-decoration": "none",
 			"background-color": theme.content_fg,
 			"border": "1px solid " + theme.content_bg,
-			"content": "attr(href)",
 			"opacity": 0,
-			"transition:opacity": ".1s linear",
+			"transition": "opacity .1s linear",
 			"font-family": "monospace"
 		} : {},
 
-		"a:hover:after": isDesktop() ? {
+		"#link-tt.reveal": isDesktop() ? {
 			"opacity": 1,
-			"transition:opacity": ".2s linear",
+			"transition": "opacity .1s linear",
 		} : {},
-
-		"a:hover:after, a:visited:after, a:link:after, a:active:after": isDesktop() ? {"text-decoration": "none"} : {},
 
 		"*:not(input):not(textarea)": isAdminClient() ? {} : {
 			"user-select": "none", /* disable selection/Copy for UI elements*/

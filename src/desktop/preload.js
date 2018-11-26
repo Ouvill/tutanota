@@ -17,10 +17,15 @@ const MenuItem = remote.MenuItem
  * @type {Electron.Menu}
  */
 const menu = new Menu()
-let pasteItem
+let pasteItem, copyItem, copyLinkItem: MenuItem
+let targetUrl: string
+
 lang.initialized.promise.then(() => {
 	pasteItem = new MenuItem({label: lang.get("paste_action"), accelerator: "CmdOrCtrl+V", click() { document.execCommand('paste') }})
-	menu.append(new MenuItem({label: lang.get("copy_action"), accelerator: "CmdOrCtrl+C", click() { document.execCommand('copy') }}))
+	copyItem = new MenuItem({label: lang.get("copy_action"), accelerator: "CmdOrCtrl+C", click: copy})
+	copyLinkItem = new MenuItem({label: lang.get("copyLink_action"), click: copy})
+	menu.append(copyItem)
+	menu.append(copyLinkItem)
 	menu.append(new MenuItem({label: lang.get("cut_action"), accelerator: "CmdOrCtrl+X", click() { document.execCommand('cut') }}))
 	menu.append(pasteItem)
 	menu.append(new MenuItem({type: 'separator'}))
@@ -31,8 +36,53 @@ lang.initialized.promise.then(() => {
 window.addEventListener('contextmenu', (e) => {
 	e.preventDefault()
 	pasteItem.enabled = clipboard.readText().length > 0
+	let sel = window.getSelection().toString()
+	if (sel.length < 1 && !!e.target.href) {
+		copyItem.visible = false
+		copyLinkItem.visible = true
+		targetUrl = e.target.href
+	} else {
+		copyItem.visible = true
+		copyLinkItem.visible = false
+		copyItem.enabled = sel.length > 0
+		targetUrl = ""
+	}
 	menu.popup({window: remote.getCurrentWindow()})
 }, false)
+
+// href URL reveal
+window.addEventListener('mouseover', (e) => {
+	if (e.target.tagName !== 'A') {
+		return
+	}
+	let elem = document.getElementById('link-tt')
+	if (!elem) {
+		elem = document.createElement("DIV")
+		elem.id = "link-tt";
+		(document.body: any).appendChild(elem)
+	}
+	elem.innerText = e.target.href
+	targetUrl = e.target.href
+	elem.className = "reveal"
+})
+
+window.addEventListener('mouseout', (e) => {
+	let elem = document.getElementById('link-tt')
+	if (e.target.tagName === 'A' && elem) {
+		elem.className = ""
+		targetUrl = ""
+	}
+})
+
+// copy function
+function copy() {
+	if (window.getSelection().toString().length < 1 && !!targetUrl) {
+		clipboard.writeText(targetUrl)
+	} else {
+		document.execCommand('copy')
+	}
+}
+
 
 function sendMessage(msg, args) {
 	ipcRenderer.send(msg, args)
