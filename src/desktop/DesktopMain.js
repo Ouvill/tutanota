@@ -29,10 +29,7 @@ if (process.argv.indexOf("-r") !== -1) {
 	DesktopUtils.unregisterAsMailtoHandler(false)
 	            .then(() => app.exit(0))
 	            .catch(() => app.exit(1))
-} else { //normal start
-	if (!app.requestSingleInstanceLock()) {
-		app.exit(0)
-	}
+} else {
 
 	app.on('window-all-closed', () => {
 		if (process.platform !== 'darwin') {
@@ -54,12 +51,6 @@ if (process.argv.indexOf("-r") !== -1) {
 
 	app.on('activate', () => {
 		mainWindow.show()
-	})
-
-	app.on('second-instance', (e, argv, cwd) => {
-		console.log("2nd instance argv: ", argv)
-		mainWindow.show()
-		handleMailto(argv.find((arg) => arg.startsWith('mailto')))
 	})
 
 	app.on('ready', createMainWindow)
