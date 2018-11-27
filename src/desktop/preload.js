@@ -52,7 +52,7 @@ window.addEventListener('contextmenu', (e) => {
 
 // href URL reveal
 window.addEventListener('mouseover', (e) => {
-	if (e.target.tagName !== 'A') {
+	if (e.target.tagName !== 'A' || !e.target.matches('#mail-viewer a')) {
 		return
 	}
 	let elem = document.getElementById('link-tt')
