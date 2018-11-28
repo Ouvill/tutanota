@@ -221,9 +221,9 @@ export class MailEditor {
 			return m("#mail-editor.full-height.text.touch-callout", {
 				oncreate: vnode => {
 					this._domElement = vnode.dom
-					nativeApp.startListening('close-editor', closeButtonAttrs.click)
+					nativeApp.startListening('close-editor', () => closeButtonAttrs.click(null, this._domCloseButton))
 				},
-				onremove: vnode => nativeApp.stopListening('close-editor', closeButtonAttrs.click),
+				onremove: vnode => nativeApp.stopListening('close-editor', () => closeButtonAttrs.click(null, this._domCloseButton)),
 				onclick: (e) => {
 					if (e.target === this._domElement) {
 						this._editor.focus()
