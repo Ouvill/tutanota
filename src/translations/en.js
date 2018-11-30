@@ -1174,6 +1174,7 @@ module.exports = {
 		"unregistered_label": "Unregistered",
 		"defaultMailHandler_msg": "Register Tutanota Desktop as the default email handler, e.g. to open mailto links. This operation may require administrator permissions.",
 		"defaultMailHandler_label": "Default Email Handler",
-		"desktopSettings_label": "Desktop Settings"
+		"desktopSettings_label": "Desktop Settings",
+		"showRichTextToolbar_action": "Show formatting Tools",
 	}
 }
